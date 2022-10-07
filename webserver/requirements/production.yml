@@ -1,0 +1,4 @@
+dependencies:
+  - gunicorn=20.1.0 # old value=20.0.4  # https://github.com/benoitc/gunicorn]
+  - pip:
+    - django_compressor==2.4.1

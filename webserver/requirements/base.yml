@@ -1,0 +1,24 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8.8 # old value=3.7.6
+  - pip=21.3.1 #old value=20.0.2
+  - conda-forge::rcssmin=1.0.6
+  - psycopg2=2.8.6 #old value = 2.8.4  # https://github.com/psycopg/psycopg2
+  - pip:
+    - django==3.2.2 #old value=2.2.16
+    - django-environ==0.4.5
+    - django-allauth==0.44.0  # https://github.com/pennersr/django-allauth #check on this
+    - redis==3.5.3
+    - django-redis==4.12.1
+    - django-crispy-forms==1.11.2
+    - django-compressor==2.4.1  # https://github.com/django-compressor/django-compressor
+    - rjsmin==1.1.0
+    - pandas==1.2.4
+    - numpy==1.20.3
+    - openpyxl==3.0.7
+    - scikit-learn==0.24.2
+    - whitenoise==5.3.0
+    - uvicorn==0.17.0
+
+# Your custom requirements go here
