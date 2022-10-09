@@ -10,6 +10,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse, Http404
 from django import template
 from django.views import View
+from planet.models import Run
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -42,17 +43,34 @@ def util_get_numeric(string):
 
     return value, dtype
 
-def workspace(request):
+def start(request):
 
-    context = {}
-    html_template = loader.get_template('home/workspace.html')
-    return HttpResponse(html_template.render(context, request))
+    if request.method == 'POST':
+        print("email:", request.POST["email"])
+        print("description:", request.POST["description"])
+        context = {}
+        html_template = loader.get_template('home/start.html')
+        return HttpResponse(html_template.render(context, request))
+    else:
+        context = {}
+        html_template = loader.get_template('home/start.html')
+        return HttpResponse(html_template.render(context, request))
 
 def upload(request, run_id):
 
     context = {}
     html_template = loader.get_template('home/upload.html')
     return HttpResponse(html_template.render(context, request))
+
+def workspace(request):
+
+    context = {}
+    html_template = loader.get_template('home/workspace.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+
+
 
 def downloads(request):
 

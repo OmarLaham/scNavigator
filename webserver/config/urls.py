@@ -26,7 +26,7 @@ urlpatterns = [
     path("", views.workspace, name='home'),
 
     #start a run
-    path("start", views.workspace, name="start"),
+    path("start", views.start, name="start"),
 
     #upload
     path("upload/<str:run_id>", views.upload, name="upload"),
