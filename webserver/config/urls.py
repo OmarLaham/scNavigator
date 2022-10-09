@@ -23,29 +23,29 @@ urlpatterns = [
     #main app URLs
 
     #homepage
-    path("", views.homepage, name='home'),
+    path("", views.workspace, name='home'),
 
     #start a run
-    path("start", views.homepage, name="start"),
+    path("start", views.workspace, name="start"),
 
     #upload
-    path("upload/<str:run_id>", views.homepage, name="upload"),
-    parth("upload/<str:run_id>/push", views.homepage, name="upload_push"),
+    path("upload/<str:run_id>", views.upload, name="upload"),
+    path("upload/<str:run_id>/push", views.workspace, name="upload_push"),
 
     #workspace
-    path("workspace/run/<str:run_id>", views.homepage, name="workspace"),
+    path("workspace/run/<str:run_id>", views.workspace, name="workspace"),
 
     #saved degs lists & operations on them
-    path("json_saved_degs_lists/<str:run_id>", views.homepage, name="saved_degs_lists"), #be careful: (s) at end in (name) param
-    path("workspace/run/<str:run_id>/saved_degs_lists/<str:degs_list_id>", views.homepage, name="saved_degs_list"), #be careful: NO (s) at end in (name) param
-    path("delete_degs_list/<str:run_id>/<str:degs_list_id>", views.homepage, name="delete_degs_list"),
+    path("json_saved_degs_lists/<str:run_id>", views.workspace, name="saved_degs_lists"), #be careful: (s) at end in (name) param
+    path("workspace/run/<str:run_id>/saved_degs_lists/<str:degs_list_id>", views.workspace, name="saved_degs_list"), #be careful: NO (s) at end in (name) param
+    path("delete_degs_list/<str:run_id>/<str:degs_list_id>", views.workspace, name="delete_degs_list"),
 
     #running experiments
-    path("run_epx_from_uploads/<str:run_id>/<str:upload_id>", views.homepage, name="run_exp_from_uploads"),
-    path("run_exp_from_prev_exp/<str:run_id>/<str:prev_exp_id>/<str:cluster_id>", views.homepage, name="run_exp_from_prev_exp"),
+    path("run_epx_from_uploads/<str:run_id>/<str:upload_id>", views.workspace, name="run_exp_from_uploads"),
+    path("run_exp_from_prev_exp/<str:run_id>/<str:prev_exp_id>/<str:cluster_id>", views.workspace, name="run_exp_from_prev_exp"),
 
     #here you can pass a full saved degs list or any list of genes
-    path("json_find_gene_intersection/<str:run_id>/<str:#exp_id>/<str:cluster_id>/<str:genes_list>", views.homepage, name="find_gene_intersection")
+    path("json_find_gene_intersection/<str:run_id>/<str:exp_id>/<str:cluster_id>/<str:genes_list>", views.workspace, name="find_gene_intersection")
 
     # UI Kits Html files
 ]

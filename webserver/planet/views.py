@@ -42,10 +42,16 @@ def util_get_numeric(string):
 
     return value, dtype
 
-def homepage(request):
+def workspace(request):
 
     context = {}
-    html_template = loader.get_template('home/index.html')
+    html_template = loader.get_template('home/workspace.html')
+    return HttpResponse(html_template.render(context, request))
+
+def upload(request, run_id):
+
+    context = {}
+    html_template = loader.get_template('home/upload.html')
     return HttpResponse(html_template.render(context, request))
 
 def downloads(request):
