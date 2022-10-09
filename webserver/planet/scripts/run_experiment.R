@@ -50,16 +50,19 @@ process.sample <- function(data, clustering.res, nDims) {
 	data <- RunUMAP(data, dims = 1:nDims)
 	data <- RunTSNE(data, dims = 1:nDims)
 	
-	p <- DimPlot(pbmc, reduction = "umap")
-	p <- AugmentPlot(p)
-	ggsave(p, paste0("../media/runs/", runID, "/data/experiments/", expID, "/umap.png"))
+	#plot UMAP
+	p <- DimPlot(data, reduction = "umap")
+	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "umap.png", plot = p)
+	print("Saved UMAP Plot")
 	
-	p <- DimPlot(pbmc, reduction = "umap")
-	p <- AugmentPlot(p)
-	ggsave(p, paste0("../media/runs/", runID, "/data/experiments/", expID, "/t-sne.png"))
+	#plot t-SNE
+	p <- DimPlot(data, reduction = "tsne")
+	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "t-sne.png", plot = p)
+	print("Saved t-SNE Plot")
 	
 	#save .rds
-	saveRDS(data, file="../media/runs/", runID, "/data/experiments/", expID, "/data.rds")
+	saveRDS(data, file=paste0("../media/runs/", runID, "/data/experiments/", expID, "/data.rds"))
+	print("Saved data as .rds")	
 	
 	#return processed seurat object
 	return(data)
@@ -101,20 +104,25 @@ run.trajectory <- function(data, root.cell.ids = c()) {
 	#plot trajectories colored by pseudotime and dave
 	p <- plot_cells(
 	  cds = data.cds,
-	  color_cells_by = "orig.ident",
+	  color_cells_by = "seurat_clusters",
 	  group_cells_by = "cluster",
 	  label_groups_by_cluster = T,
 	  show_trajectory_graph = TRUE,
 	  label_cell_groups = F,
 	  group_label_size = 3
 	)
-	ggsave(p, filename=paste0("../media/runs/", runID, "/data/experiments/", expID, "/trajectory_pseudotime_plot.png"))
+	
+	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "trajectory_pseudotime_plot.png", plot = p)
 	print("> Saved pseudotime plot.")
 	
 }
 
 #create exp dir if not exist
-ifelse(!dir.exists(file.path(paste0("../media/runs/", runID, "/data/experiments"), expID), dir.create(file.path(paste0("../media/runs/", runID, "/data/experiments"), expID)), FALSE)
+mainDir <- paste0("../media/runs/", runID, "/data/experiments/")
+subDir <- expID
+if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
+	dir.create(file.path(mainDir, subDir))
+}
 
 print("> Processing sample..")
 
@@ -136,6 +144,7 @@ data <- CreateSeuratObject(counts = data, project = "scNavigator", min.cells = 3
 data <- process.sample(data, clustering.res = clusteringResolution, nDims=nDims)
 
 #run trajectory to plot pseudotime trajectory
+print("> Trajectory analysis..")
 run.trajectory(data)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
