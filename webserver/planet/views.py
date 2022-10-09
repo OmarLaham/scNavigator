@@ -58,7 +58,7 @@ def workspace(request, run_id):
 
     raw_uploads_path = path.join(settings.RUNS_DIR, run_id, "data", "raw_uploads")
 
-    raw_uploads = tuple(os.listdir(raw_uploads_path)) # must convert to tuple (immutable) to be hashable -> return in context
+    raw_uploads = tuple(list(sorted((os.listdir(raw_uploads_path))))) # must convert to tuple (immutable) to be hashable -> return in context
 
     context = {
         "raw_uploads": raw_uploads
