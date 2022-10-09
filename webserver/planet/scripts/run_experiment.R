@@ -55,10 +55,19 @@ process.sample <- function(data, clustering.res, nDims) {
 	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "umap.png", plot = p)
 	print("Saved UMAP Plot")
 	
+	#export UMAP cell embeddings (coords) for better visualization than Seurat plots
+	umap.cell.embeddings <- as.data.frame(data[["umap"]]@cell.embeddings)
+	write.csv(umap.cell.embeddings, paste0("../media/runs/", runID, "/data/experiments/", expID, "/umap_cell_embedding.csv"))
+	
+	
 	#plot t-SNE
 	p <- DimPlot(data, reduction = "tsne")
-	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "t-sne.png", plot = p)
+	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "tsne.png", plot = p)
 	print("Saved t-SNE Plot")
+	
+	#export t-SNE cell embeddings (coords) for better visualization than Seurat plots
+	tsne.cell.embeddings <- as.data.frame(data[["tsne"]]@cell.embeddings)
+	write.csv(tsne.cell.embeddings, paste0("../media/runs/", runID, "/data/experiments/", expID, "/tsne_cell_embedding.csv"))
 	
 	#save .rds
 	saveRDS(data, file=paste0("../media/runs/", runID, "/data/experiments/", expID, "/data.rds"))
