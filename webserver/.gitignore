@@ -329,3 +329,6 @@ planet/media/
 .env
 .envs/*
 !.envs/.local/
+
+#will have big size files
+planet/media/runs/

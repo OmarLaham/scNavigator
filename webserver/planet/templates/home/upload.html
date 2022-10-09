@@ -2,13 +2,13 @@
 
 {% load static %}
 
-{% block title %} Dashboard {% endblock title %}
+{% block title %} Settings & Uploading {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
-
+    <h6 class="font-weight-bolder mb-0">Settings & Uploading </h6>
     <div class="container-fluid py-4">
 
       <div id="experiment-settings" class="row mt-4">
@@ -28,7 +28,7 @@
                         Please Select
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#">.RDS File(s)</a></li>
+                        <li><a class="dropdown-item" href="#">.rds or .rds.gz File(s)</a></li>
                         <li><a class="dropdown-item" href="#">10 Genomex</a></li>
                       </ul>
                     </div>
@@ -73,7 +73,10 @@
                     <h5 class="font-weight-bolder">Upload Files</h5>
                     <div style="background-color: white; border: 2px dashed #bbbbbb; height: 200px;" class="text-center"><br /><br /><br />Upload your files here</div>
                     <br />
+                    <a class="text-primary" href="/workspace/run/1">Start Uploading <i class="fas fa-cloud-upload-alt ms-1" aria-hidden="true"></i></a>
+                    {% comment %}
                     <a class="text-primary" href="javascript:;">Start Uploading <i class="fas fa-cloud-upload-alt ms-1" aria-hidden="true"></i></a>
+                    {% endcomment %}
                   </div>
                 </div>
                 <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">

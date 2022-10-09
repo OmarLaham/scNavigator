@@ -2,13 +2,14 @@
 
 {% load static %}
 
-{% block title %} Dashboard {% endblock title %}
+{% block title %} Starting! {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
 
+    <h6 class="font-weight-bolder mb-0">Starting!</h6>
     <div class="container-fluid py-4">
 
       <div id="experiment-settings" class="row mt-4">
@@ -25,18 +26,21 @@
                     <form id="form-start" action="start" method="post">
                     {% csrf_token %}
                       <div class="input-group mb-3">
-                        <span class="input-group-text bg-gray-300" id="basic-addon1">Your Email</span>
-                        <input name="email" type="text" class="form-control" placeholder="email@domain.com" aria-label="Email" aria-describedby="basic-addon1">
+                        <span class="input-group-text bg-gray-300" id="basic-addon1">Your Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input name="email" type="text" class="form-control p-lg-1" placeholder="email@domain.com" aria-label="Email" aria-describedby="basic-addon1">
                       </div>
 
                       <div class="input-group mb-3">
                         <span class="input-group-text bg-gray-300" id="basic-addon2">Run Description</span>
-                        <input name="description" type="text" class="form-control" placeholder="Description" aria-label="Run Description" aria-describedby="basic-addon2">
+                        <input name="description" type="text" class="form-control p-lg-1" placeholder="Description" aria-label="Run Description" aria-describedby="basic-addon2">
                       </div>
 
                       <br /><br /><br /><br />
 
+                      <a id="btn-start-tmp" class="text-primary" style="cursor: pointer" href="upload/1">Next <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i></a>
+                      {% comment %}
                       <a id="btn-start" class="text-primary" style="cursor: pointer">Next <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i></a>
+                      {% endcomment %}
                     </form>
 
                   </div>

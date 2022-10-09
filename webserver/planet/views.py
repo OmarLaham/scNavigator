@@ -25,23 +25,12 @@ import json
 import gzip
 from glob import glob, escape
 
-def util_get_numeric(string):
-    value = None
-    dtype = None
+import os
+from os import path
 
-    try:
-        value = int(string)
-        dtype = "int"
-        return value, dtype
-    except:
-        try:
-            value = float(string)
-            dtype = "float"
-            return value, dtype
-        except:
-            return value, dtype
+import planet.utils.helper_functions as hf
 
-    return value, dtype
+
 
 def start(request):
 
@@ -62,9 +51,19 @@ def upload(request, run_id):
     html_template = loader.get_template('home/upload.html')
     return HttpResponse(html_template.render(context, request))
 
-def workspace(request):
+def workspace(request, run_id):
 
-    context = {}
+    # validate run id
+    hf.is_valid_run(run_id)
+
+    raw_uploads_path = path.join(settings.RUNS_DIR, run_id, "data", "raw_uploads")
+
+    raw_uploads = tuple(os.listdir(raw_uploads_path)) # must convert to tuple (immutable) to be hashable -> return in context
+
+    context = {
+        "raw_uploads": raw_uploads
+    }
+
     html_template = loader.get_template('home/workspace.html')
     return HttpResponse(html_template.render(context, request))
 
