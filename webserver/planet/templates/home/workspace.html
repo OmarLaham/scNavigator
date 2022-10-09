@@ -23,6 +23,8 @@
                       <h6 class="fmb-0">
                         {{ raw_upload }}
                         <br />
+                        <a href="javascript:;" class="lnk-elbow-plot" data-raw-upload="{{ raw_upload }}"><span class="text-success text-sm">Elbow plot</span></a>
+                         |
                         <a href="javascript:;" class="lnk-run-experiment" data-raw-upload="{{ raw_upload }}"><span class="text-success text-sm">Run experiment</span></a>
                       </h6>
                     </div>
@@ -489,6 +491,33 @@
 
     <!-- hidden code area -->
 
+  <!-- elbow plot modal -->
+    <div id="modal-elbow-plot" class="modal" tabindex="-1" data-raw-upload="">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Generate Elbow Plot</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Pick a value for nDims to generate elbow plot:</p>
+            <div class="input-group mt-3">
+              <span class="input-group-text bg-gray-300" id="basic-addon1">nDims</span>
+              <input id="txt-elbow-n-dims" type="text" class="form-control" placeholder="40" aria-label="nDims" aria-describedby="basic-addon1">
+            </div>
+            <span id="titleHelpInline" class="form-text">
+              Picking this value carefully is very important for running experiment later.
+            </span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- / run experiment modal -->
+
     <!-- run experiment modal -->
     <div id="modal-run-experiment" class="modal" tabindex="-1" data-raw-upload="">
       <div class="modal-dialog">
@@ -511,6 +540,19 @@
                   Must be 8-25 characters long.
                 </span>
               </div>
+            </div>
+            <hr />
+            <p>Experiment Settings:</p>
+            <div class="input-group mb-0">
+              <span class="input-group-text bg-gray-300" id="basic-addon1">nDims&nbsp;&nbsp;</span>
+              <input id="txt-experiment-n-dims" type="text" class="form-control" placeholder="40" aria-label="nDims" aria-describedby="basic-addon1">
+            </div>
+            <span id="titleHelpInline" class="form-text">
+                Always better to run (Elbow Plot) before picking nDims value.
+            </span>
+            <div class="input-group mt-3">
+              <span class="input-group-text bg-gray-300" id="basic-addon2">Clustering Resolution</span>
+              <input id="txt-clustering-res" type="text" class="form-control" placeholder="0.8" aria-label="clustering-res" aria-describedby="basic-addon2">
             </div>
 
           </div>

@@ -1,5 +1,15 @@
 $(document).ready(function() {
-   $(".lnk-run-experiment").click(function() {
+   $(".lnk-elbow-plot").click(function() {
+        let rawUpload = $(this).data("raw-upload");
+        $('#modal-elbow-plot').data("raw-upload", rawUpload);
+
+        var elbowPlotModal = new bootstrap.Modal(document.getElementById('modal-elbow-plot'), {
+            keyboard: false
+        })
+        elbowPlotModal.toggle();
+   });
+
+    $(".lnk-run-experiment").click(function() {
         let rawUpload = $(this).data("raw-upload");
         $('#modal-run-experiment').data("raw-upload", rawUpload);
 
