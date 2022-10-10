@@ -85,6 +85,32 @@ def run_r_script_qc_metrics(request, run_id, upload_name, min_nfeature_rna, max_
 
     return JsonResponse(context)
 
+def run_r_script_elbow_plot(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims):
+
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "elbow_plot.R"),
+         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims)])
+
+    context = {
+        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "elbow_plot.png").split("/media/")[1]
+    }
+
+    return JsonResponse(context)
+
+def run_r_script_run_experiment(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
+
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "run_experiment.R"),
+         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
+
+    context = {
+        "umap_img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "umap.png").split("/media/")[1]
+    }
+
+    return JsonResponse(context)
+
 def downloads(request):
 
     context = {}

@@ -62,10 +62,10 @@ process.sample <- function(data, nFeature.RNA.min=200, nFeature.RNA.max=3000, pe
 }
 
 #plot elbow plot
-elbow.plot <- function(data, runs.dir) {
+elbow.plot <- function(data, runs.dir, n.dims) {
 
 	# Plot the elbow plot to determine number of clusters
-	p <- ElbowPlot(object = data, ndims = 50)
+	p <- ElbowPlot(object = data, ndims = n.dims)
 	p <- AugmentPlot(p)
 	ggsave(p, filename=paste0(runs.dir, runID, "/tmp/elbow_plot.png"))
 

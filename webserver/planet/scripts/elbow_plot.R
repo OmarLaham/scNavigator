@@ -5,10 +5,10 @@ library(ggplot2)
 
 root.dir = "/app/"
 app.dir = paste0(root.dir, "planet/")
-scripts.dir = paste0(root.dir, "scripts/")
+scripts.dir = paste0(app.dir, "scripts/")
 runs.dir = paste0(app.dir, "media/runs/")
 
-source('helper_functions.R')
+source(paste0(scripts.dir, 'helper_functions.R'))
 
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
@@ -25,7 +25,7 @@ set.seed(1234)
 print("> Processing sample..")
 
 
-dir <- paste0("../media/runs/", runID, "/data/raw_uploads/", uploadName, "/")
+dir <- paste0(runs.dir, runID, "/data/raw_uploads/", uploadName, "/")
 
 # Load the dataset
 data <- load.data(dir, runID, uploadName)
@@ -38,7 +38,7 @@ data
 data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percentMT)
 
 #plot elbow plot
-elbow.plot(data, runs.dir)
+elbow.plot(data, runs.dir, nDims)
 
 
 print("Done and elbow plot saved!")

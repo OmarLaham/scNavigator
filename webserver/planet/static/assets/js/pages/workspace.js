@@ -58,38 +58,84 @@ $(document).ready(function() {
                 }
             })
             .fail(function() {
-                alert( "Error in fetching data. Please try again later." );
+                alert( "Error. Please try again later." );
             })
     });
 
     $('#btn-accordion-elbow-run').click(function () {
 
         //show spinner
-        $('#accordion-container-spinner').removeClass("d-none")
+        $('#accordion-elbow-spinner').removeClass("d-none")
 
-        const nDims = $('#txt-elbow-nDims').val();
-        json_url = `/run_r_script/elbow_plot.R/${runID}/${uploadName}/${nDims}`
+        const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
+        const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
+        const percentMT = $('#txt-percent-mt').val();
+        const nDims = $('#txt-elbow-n-dims').val();
+
+        json_url = `/run_r_script/elbow_plot/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}`
         $.get(json_url, function(response) {
         })
             .done(function(response) {
                 if (response) {
 
                     let data = response;
-                    console.log(data);
+                    //console.log(data);
                     const img_src = data["img_src"];
-                    //const elbow_img_src = `media/runs/${runID}/data/experiments/${uploadName}/${nDims}`
-                    $('#accordion-elbow-container > img').attr("src", img_src);
 
-                    //show img
-                    $('#accordion-elbow-container > img').hide();
-                    $('#accordion-elbow-container > img').fadeIn();
+                    $('#accordion-elbow-container img').attr("src", img_src);
 
                     //hide spinner
-                    $('#accordion-container-spinner').addClass("d-none");
+                    $('#accordion-elbow-spinner').addClass("d-none");
+
+                    //show img
+                    $('#accordion-elbow-container').hide();
+                    $('#accordion-elbow-container').removeClass('d-none')
+                    $('#accordion-elbow-container').fadeIn();
+
+
                 }
             })
             .fail(function() {
-                alert( "Error in fetching heatmap data. Please try again later." );
+                alert( "Error. Please try again later." );
             })
     });
+
+    $('#btn-run-exp-run').click(function () {
+
+        //show spinner
+        $('#accordion-elbow-spinner').removeClass("d-none")
+
+        const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
+        const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
+        const percentMT = $('#txt-percent-mt').val();
+        const nDims = $('#txt-elbow-n-dims').val();
+
+        json_url = `/run_r_script/elbow_plot/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}`
+        $.get(json_url, function(response) {
+        })
+            .done(function(response) {
+                if (response) {
+
+                    let data = response;
+                    //console.log(data);
+                    const img_src = data["img_src"];
+
+                    $('#accordion-elbow-container img').attr("src", img_src);
+
+                    //hide spinner
+                    $('#accordion-elbow-spinner').addClass("d-none");
+
+                    //show img
+                    $('#accordion-elbow-container').hide();
+                    $('#accordion-elbow-container').removeClass('d-none')
+                    $('#accordion-elbow-container').fadeIn();
+
+
+                }
+            })
+            .fail(function() {
+                alert( "Error. Please try again later." );
+            })
+    });
+
 });
