@@ -3,21 +3,28 @@ library(Seurat)
 library(patchwork)
 library(ggplot2)
 
-source('helper_functions.R')
 
 #load data depending on upload type
-load.data <-function(dir, upload.type, upload.name) {
+load.data <-function(dir, runID, upload.name) {
+
+	
+	rds.file.name <- paste0(dir, upload.name, ".rds")
+	rds.gz.file.name <- paste0(dir, upload.name, ".rds")
 
 	data <- NULL
-	if(upload.type== "rds") {
-		data <- readRDS(paste0(dir, upload.name, ".rds"))
-	} else if (upload.type == "rds.gz") {
-		data <- readRDS(paste0(dir, upload.name, ".rds.gz"))
-	} else { #10 Genomex
+	
+	if(dir.exists(rds.file.name) == TRUE) {
+		print(">> Loading .rds..")
+		data <- readRDS(rds.file.name)
+	} else if (dir.exists(rds.gz.file.name) == TRUE) {
+		print(">> Loading .rds.gz..")
+		data <- readRDS(rds.gz.file.name)
+	} else { #10Genomex
+		print(">> Loading 10 Genomex..")
 		data <- Read10X(data.dir = dir)
 	}
-	
-	return data
+
+	return (data)
 
 }
 
@@ -27,7 +34,8 @@ process.sample <- function(data, nFeature.RNA.min=200, nFeature.RNA.max=3000, pe
 	# The [[ operator can add columns to object metadata. This is a great place to stash QC stats
 	data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-")
 
-	data <- subset(data, subset = nFeature_RNA > nFeature.RNA.min & nFeature_RNA < nFeature.RNA.max & percent.mt < percent.mt)
+	#data <- subset(data, subset = nFeature_RNA > nFeature.RNA.min & nFeature_RNA < nFeature.RNA.max & percent.mt < percent.mt)
+	data <- subset(data, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
 
 	#Normalizing the data
 	data <- NormalizeData(data)
