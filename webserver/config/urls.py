@@ -45,13 +45,14 @@ urlpatterns = [
     path("run_exp_from_prev_exp/<str:run_id>/<str:prev_exp_id>/<str:cluster_id>", views.workspace, name="run_exp_from_prev_exp"),
 
     #r-scripts runners
-    path("run_r_script/elbow_plot/<str:runID>/<str:upload_name>/<int:nDims>", views.workspace, name="r-elbow-plot"),
+    path("run_r_script/qc_metrics/<str:run_id>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>", views.run_r_script_qc_metrics, name="r-qc-metrics"),
+    path("run_r_script/elbow_plot/<str:run_id>/<str:upload_name>/<int:nDims>", views.workspace, name="r-elbow-plot"),
 
     #here you can pass a full saved degs list or any list of genes
     path("json_find_gene_intersection/<str:run_id>/<str:exp_id>/<str:cluster_id>/<str:genes_list>", views.workspace, name="find_gene_intersection")
 
     # UI Kits Html files
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # server files from media
 
 if settings.DEBUG:
     import debug_toolbar

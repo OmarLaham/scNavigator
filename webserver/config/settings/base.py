@@ -155,6 +155,7 @@ MEDIA_ROOT = str(APPS_DIR / "media")
 MEDIA_URL = "/media/"
 
 RUNS_DIR = path.join(APPS_DIR, "media", "runs")
+SCRIPTS_DIR = path.join(APPS_DIR, "scripts")
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
@@ -270,6 +271,7 @@ SOCIALACCOUNT_ADAPTER = "planet.users.adapters.SocialAccountAdapter"
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
+
 
 # Your stuff...
 # ------------------------------------------------------------------------------

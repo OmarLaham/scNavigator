@@ -28,6 +28,10 @@ from glob import glob, escape
 import os
 from os import path
 
+#to run bash scripts
+import subprocess
+from subprocess import Popen, PIPE
+
 import planet.utils.helper_functions as hf
 
 
@@ -68,8 +72,18 @@ def workspace(request, run_id):
     return HttpResponse(html_template.render(context, request))
 
 
+def run_r_script_qc_metrics(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt):
 
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "qc_metrics.R"),
+         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt)])
 
+    context = {
+        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "qc_metrics.png").split("/media/")[1]
+    }
+
+    return JsonResponse(context)
 
 def downloads(request):
 

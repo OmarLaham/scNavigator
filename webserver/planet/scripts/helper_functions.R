@@ -3,6 +3,10 @@ library(Seurat)
 library(patchwork)
 library(ggplot2)
 
+root.dir = "/app/"
+app.dir = paste0(root.dir, "planet/")
+scripts.dir = paste0(root.dir, "scripts/")
+runs.dir = paste0(app.dir, "media/runs/")
 
 #load data depending on upload type
 load.data <-function(dir, runID, upload.name) {
@@ -29,13 +33,12 @@ load.data <-function(dir, runID, upload.name) {
 }
 
 # filter, normalized, find variable features, scale and run PCA
-process.sample <- function(data, nFeature.RNA.min=200, nFeature.RNA.max=3000, percent.mt=5) {
+process.sample <- function(data, nFeature.RNA.min=200, nFeature.RNA.max=3000, percentMT=5) {
 
 	# The [[ operator can add columns to object metadata. This is a great place to stash QC stats
 	data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-")
 
-	#data <- subset(data, subset = nFeature_RNA > nFeature.RNA.min & nFeature_RNA < nFeature.RNA.max & percent.mt < percent.mt)
-	data <- subset(data, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+	data <- subset(data, subset = nFeature_RNA > nFeature.RNA.min & nFeature_RNA < nFeature.RNA.max & percent.mt < percentMT)
 
 	#Normalizing the data
 	data <- NormalizeData(data)
@@ -55,18 +58,16 @@ process.sample <- function(data, nFeature.RNA.min=200, nFeature.RNA.max=3000, pe
 	print("> PCA done!")
 	
 	return(data)
-
-	
 			
 }
 
 #plot elbow plot
-elbow.plot <- function(data) {
+elbow.plot <- function(data, runs.dir) {
 
 	# Plot the elbow plot to determine number of clusters
 	p <- ElbowPlot(object = data, ndims = 50)
 	p <- AugmentPlot(p)
-	ggsave(p, filename=paste0("../media/runs/", runID, "/tmp/elbow_plot.png"))
+	ggsave(p, filename=paste0(runs.dir, runID, "/tmp/elbow_plot.png"))
 
 	
 	#return processed seurat object
@@ -84,7 +85,7 @@ find.clusters <- function(data, clustering.res, nDims) {
 
 }
 #dimensionality reduction UMAP and t-SNE
-reduce.dimensions <- function(data, nDims) {
+reduce.dimensions <- function(data, nDims, runs.dir) {
 
 	#Run non-linear dimensional reduction (UMAP/tSNE) and save plots
 	data <- RunUMAP(data, dims = 1:nDims)
@@ -92,25 +93,25 @@ reduce.dimensions <- function(data, nDims) {
 	
 	#plot UMAP
 	p <- DimPlot(data, reduction = "umap")
-	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "umap.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "umap.png", plot = p)
 	print("Saved UMAP Plot")
 	
 	#export UMAP cell embeddings (coords) for better visualization than Seurat plots
 	umap.cell.embeddings <- as.data.frame(data[["umap"]]@cell.embeddings)
-	write.csv(umap.cell.embeddings, paste0("../media/runs/", runID, "/data/experiments/", expID, "/umap_cell_embedding.csv"))
+	write.csv(umap.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expID, "/umap_cell_embedding.csv"))
 	
 	
 	#plot t-SNE
 	p <- DimPlot(data, reduction = "tsne")
-	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "tsne.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "tsne.png", plot = p)
 	print("Saved t-SNE Plot")
 	
 	#export t-SNE cell embeddings (coords) for better visualization than Seurat plots
 	tsne.cell.embeddings <- as.data.frame(data[["tsne"]]@cell.embeddings)
-	write.csv(tsne.cell.embeddings, paste0("../media/runs/", runID, "/data/experiments/", expID, "/tsne_cell_embedding.csv"))
+	write.csv(tsne.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expID, "/tsne_cell_embedding.csv"))
 	
 	#save .rds
-	saveRDS(data, file=paste0("../media/runs/", runID, "/data/experiments/", expID, "/data.rds"))
+	saveRDS(data, file=paste0(runs.dir, runID, "/data/experiments/", expID, "/data.rds"))
 	print("Saved data as .rds")	
 	
 	#return processed seurat object
@@ -134,7 +135,7 @@ get_earliest_principal_node <- function(cds, time_bin="130-170"){
 
 
 #data is your seurat object
-run.trajectory <- function(data, root.cell.ids = c()) {
+run.trajectory <- function(data, root.cell.ids = c(), runs.dir) {
 
 	#We can convert the Seurat object to a CellDataSet object using the as.cell_data_set() function from SeuratWrappers
 	
@@ -162,7 +163,7 @@ run.trajectory <- function(data, root.cell.ids = c()) {
 	  group_label_size = 3
 	)
 	
-	ggsave(path = paste0("../media/runs/", runID, "/data/experiments/", expID, "/"), device = "png", filename = "trajectory_pseudotime_plot.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "trajectory_pseudotime_plot.png", plot = p)
 	print("> Saved pseudotime plot.")
 	
 }

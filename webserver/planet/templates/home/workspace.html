@@ -57,23 +57,24 @@
                       <div class="accordion-item">
                         <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                            Calibrate Filtering Parameters
+                            Tune Filtering Parameters
                           </button>
                         </h2>
                         <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
                           <div class="accordion-body">
                             <div>
-                              <p>Tune your filtering parameters to get best results from your analysis:</p>
-                              <div class="input-group mb-0">
-                                <span class="input-group-text bg-gray-300" id="basic-addon1">nDims&nbsp;&nbsp;</span>
-                                <input id="txt-experiment-n-dims" type="text" class="form-control" placeholder="30" aria-label="nDims" aria-describedby="basic-addon1">
-                              </div>
-                              <span id="titleHelpInline" class="form-text">
-                                  Always better to run (Elbow Plot) before picking nDims value.
-                              </span>
+                              <p>Tune your filtering parameters then press RUN to see display visualization:</p>
                               <div class="input-group mt-3">
-                                <span class="input-group-text bg-gray-300" id="basic-addon2">Clustering Resolution</span>
-                                <input id="txt-clustering-res" type="text" class="form-control" placeholder="0.8" aria-label="clustering-res" aria-describedby="basic-addon2">
+                                <span class="input-group-text bg-gray-300" id="basic-addon2">Min. nFeature RNA</span>
+                                <input id="txt-min-nfeature-rna" type="text" class="form-control" placeholder="200" aria-label="" aria-describedby="basic-addon2" value="200">
+                              </div>
+                              <div class="input-group mt-3">
+                                <span class="input-group-text bg-gray-300" id="basic-addon2">Max. nFeature RNA</span>
+                                <input id="txt-max-nfeature-rna" type="text" class="form-control" placeholder="2500" aria-label="" aria-describedby="basic-addon2" value="2500">
+                              </div>
+                              <div class="input-group mt-3">
+                                <span class="input-group-text bg-gray-300" id="basic-addon2">Percent Mt</span>
+                                <input id="txt-percent-mt" type="text" class="form-control" placeholder="0.8" aria-label="" aria-describedby="basic-addon2" value="5">
                               </div>
                             </div>
                             <br />
@@ -81,12 +82,11 @@
 
                             <div id="accordion-filtering-spinner" class="text-center d-none">
                               <div class="spinner-border text-secondary" role="status">
-                                <span>This can take a minute..</span>
                                 <span class="sr-only">Loading...</span>
                               </div>
                             </div>
-                            <div id="accordion-filtering-container" class="d-none">
-                              <img src="" />
+                            <div id="accordion-filtering-container" class="d-none text-center">
+                              <img src="" width="60%"/>
                             </div>
 
                           </div>
@@ -137,8 +137,8 @@
                           <div class="accordion-body">
                             <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
                             <br />
-                            <button id="btn-accordion-elbow-run" class="btn btn-small btn-primary">Run</button>
-                            <div id="accordion-elbow-spinner" class="text-center d-none">
+                            <button id="btn-accordion-run-exp-run" class="btn btn-small btn-primary">Run</button>
+                            <div id="accordion-run-exp-spinner" class="text-center d-none">
                               <div class="spinner-border text-secondary" role="status">
                                 <span>This can take a minute..</span>
                                 <span class="sr-only">Loading...</span>

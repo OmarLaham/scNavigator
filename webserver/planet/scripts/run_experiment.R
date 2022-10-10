@@ -5,19 +5,23 @@ library(ggplot2)
 library(SeuratWrappers)
 library(monocle3)
 
+root.dir = "/app/"
+app.dir = paste0(root.dir, "planet/")
+scripts.dir = paste0(root.dir, "scripts/")
+runs.dir = paste0(app.dir, "media/runs/")
+
 source('helper_functions.R')
 
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
-uploadType <- args[[2]];
+expTitle <- args[[2]];
 uploadName <- args[[3]];
-expID <- args[[4]];
-nFeature.RNA.min <- as.double(args[[5]]);
-nFeature.RNA.max <- as.double(args[[6]]);
-percent.mt <- as.double(args[[7]]);
-nDims <- args[[8]];
-clusteringResolution <- as.double(args[[9]])
+nFeature.RNA.min <- as.double(args[[4]]);
+nFeature.RNA.max <- as.double(args[[5]]);
+percentMT <- as.double(args[[6]]);
+nDims <- args[[7]];
+clusteringResolution <- as.double(args[[8]])
 
 
 #very important to use same seed so we dont have different results for different runs
@@ -27,7 +31,7 @@ set.seed(1234)
 
 #create exp dir if not exist
 mainDir <- paste0("../media/runs/", runID, "/data/experiments/")
-subDir <- expID
+subDir <- expTitle
 if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
 	dir.create(file.path(mainDir, subDir))
 }
@@ -42,17 +46,17 @@ data <- load.data(dir, uploadType, uploadName)
 # Initialize the Seurat object with the raw (non-normalized data).
 data <- CreateSeuratObject(counts = data, project = "scNavigator", min.cells = 3, min.features = 200)
 
-data <- process.sample(data)
+data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percentMT)
 
 print("> Clustering..")
 data <- find.clusters(data, clusteringResolution, nDims)
 
 print("> Dimensionality Reduction..")
-data <- reduce.dimensions(data, nDims)
+data <- reduce.dimensions(data, nDims, runs.dir)
 
 #run trajectory to plot pseudotime trajectory
 print("> Trajectory analysis..")
-run.trajectory(data)
+run.trajectory(data, c(), runs.dir)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
 

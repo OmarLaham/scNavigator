@@ -2,19 +2,21 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(ggplot2)
-library(SeuratWrappers)
-library(monocle3)
+
+root.dir = "/app/"
+app.dir = paste0(root.dir, "planet/")
+scripts.dir = paste0(app.dir, "scripts/")
+runs.dir = paste0(app.dir, "media/runs/")
+
+source(paste0(scripts.dir, 'helper_functions.R'))
 
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
-uploadType <- args[[2]];
-uploadName <- args[[3]];
-expID <- args[[4]];
-nFeature.RNA.min <- as.double(args[[5]]);
-nFeature.RNA.max <- as.double(args[[6]]);
-percent.mt <- as.double(args[[7]]);
-nDims <- args[[8]];
+uploadName <- args[[2]];
+nFeature.RNA.min <- as.integer(args[[3]]);
+nFeature.RNA.max <-  as.integer(args[[4]]);
+percentMT <-  as.integer(args[[5]]);
 
 
 #very important to use same seed so we dont have different results for different runs
@@ -23,7 +25,7 @@ set.seed(1234)
 
 print("> Processing sample..")
 
-dir <- paste0("../media/runs/", runID, "/data/raw_uploads/", uploadName, "/")
+dir <- paste0(runs.dir, runID, "/data/raw_uploads/", uploadName, "/")
 
 # Load the dataset
 data <- load.data(dir, uploadType, uploadName)
@@ -33,11 +35,11 @@ data <- CreateSeuratObject(counts = data, project = "scNavigator", min.cells = 3
 
 
 
-data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percent.mt)
+data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percentMT)
 
 print("Plotting QC metrics..")
 p <- VlnPlot(data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-ggsave(path = paste0("../media/runs/", runID, "/tmp/"), device = "png", filename = "qc_metrics.png", plot = p)
+ggsave(path = paste0(runs.dir, runID, "/tmp/"), device = "png", filename = "qc_metrics.png", plot = p)
 	print("Saved UMAP Plot")
 
 print("Done and plotted QC metrics..")

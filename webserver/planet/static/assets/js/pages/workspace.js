@@ -24,6 +24,44 @@ $(document).ready(function() {
         runExperimentModal.toggle();
    });
 
+
+    $('#btn-accordion-filtering-run').click(function () {
+
+        //show spinner
+        $('#accordion-filtering-spinner').removeClass("d-none")
+
+        const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
+        const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
+        const percentMT = $('#txt-percent-mt').val();
+
+        json_url = `/run_r_script/qc_metrics/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}`
+        $.get(json_url, function(response) {
+        })
+            .done(function(response) {
+                if (response) {
+
+                    let data = response;
+                    //console.log(data);
+                    const img_src = data["img_src"];
+
+                    $('#accordion-filtering-container img').attr("src", img_src);
+
+                    //hide spinner
+                    $('#accordion-filtering-spinner').addClass("d-none");
+
+                    //show img
+                    $('#accordion-filtering-container').hide();
+                    $('#accordion-filtering-container').removeClass('d-none')
+                    $('#accordion-filtering-container').fadeIn();
+
+
+                }
+            })
+            .fail(function() {
+                alert( "Error in fetching data. Please try again later." );
+            })
+    });
+
     $('#btn-accordion-elbow-run').click(function () {
 
         //show spinner
@@ -38,9 +76,9 @@ $(document).ready(function() {
 
                     let data = response;
                     console.log(data);
-                    const elbow_img_src = data["elbow_img_src"];
+                    const img_src = data["img_src"];
                     //const elbow_img_src = `media/runs/${runID}/data/experiments/${uploadName}/${nDims}`
-                    $('#accordion-elbow-container > img').attr("src", elbow_img_src);
+                    $('#accordion-elbow-container > img').attr("src", img_src);
 
                     //show img
                     $('#accordion-elbow-container > img').hide();
@@ -53,5 +91,5 @@ $(document).ready(function() {
             .fail(function() {
                 alert( "Error in fetching heatmap data. Please try again later." );
             })
-    })
+    });
 });
