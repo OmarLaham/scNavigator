@@ -3,6 +3,8 @@ library(Seurat)
 library(patchwork)
 library(ggplot2)
 
+source('helper_functions.R')
+
 #load data depending on upload type
 load.data <-function(dir, upload.type, upload.name) {
 

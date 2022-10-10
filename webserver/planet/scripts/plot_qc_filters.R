@@ -11,10 +11,11 @@ runID <- args[[1]];
 uploadType <- args[[2]];
 uploadName <- args[[3]];
 expID <- args[[4]];
-nDims <- args[[5]];
-nFeature.RNA.min <- as.double(args[[6]]);
-nFeature.RNA.max <- as.double(args[[7]]);
-percent.mt <- as.double(args[[8]]);
+nFeature.RNA.min <- as.double(args[[5]]);
+nFeature.RNA.max <- as.double(args[[6]]);
+percent.mt <- as.double(args[[7]]);
+nDims <- args[[8]];
+
 
 #very important to use same seed so we dont have different results for different runs
 set.seed(1234)
@@ -32,7 +33,7 @@ data <- CreateSeuratObject(counts = data, project = "scNavigator", min.cells = 3
 
 
 
-data <- process.sample(data)
+data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percent.mt)
 
 print("Plotting QC metrics..")
 p <- VlnPlot(data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)

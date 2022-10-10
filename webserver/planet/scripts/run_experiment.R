@@ -5,14 +5,20 @@ library(ggplot2)
 library(SeuratWrappers)
 library(monocle3)
 
+source('helper_functions.R')
+
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
 uploadType <- args[[2]];
 uploadName <- args[[3]];
 expID <- args[[4]];
-nDims <- args[[5]];
-clusteringResolution <- as.double(args[[6]])
+nFeature.RNA.min <- as.double(args[[5]]);
+nFeature.RNA.max <- as.double(args[[6]]);
+percent.mt <- as.double(args[[7]]);
+nDims <- args[[8]];
+clusteringResolution <- as.double(args[[9]])
+
 
 #very important to use same seed so we dont have different results for different runs
 set.seed(1234)

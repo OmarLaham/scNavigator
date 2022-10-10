@@ -3,7 +3,7 @@ library(Seurat)
 library(patchwork)
 library(ggplot2)
 
-source(helper_functions)
+source('helper_functions.R')
 
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
