@@ -7,19 +7,26 @@ library(monocle3)
 
 root.dir = "/app/"
 app.dir = paste0(root.dir, "planet/")
-scripts.dir = paste0(root.dir, "scripts/")
+scripts.dir = paste0(app.dir, "scripts/")
 runs.dir = paste0(app.dir, "media/runs/")
 
-source('helper_functions.R')
+#fix
+if (packageVersion('Matrix') != '1.3.2') {
+	remove.packages("Matrix")
+	packageurl <- "https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.3-2.tar.gz"
+	install.packages(packageurl, repos=NULL, type="source")
+}
+
+source(paste0(scripts.dir, 'helper_functions.R'))
 
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
 expTitle <- args[[2]];
 uploadName <- args[[3]];
-nFeature.RNA.min <- as.double(args[[4]]);
-nFeature.RNA.max <- as.double(args[[5]]);
-percentMT <- as.double(args[[6]]);
+nFeature.RNA.min <- as.integer(args[[4]]);
+nFeature.RNA.max <- as.integer(args[[5]]);
+percentMT <- as.integer(args[[6]]);
 nDims <- args[[7]];
 clusteringResolution <- as.double(args[[8]])
 
@@ -30,7 +37,7 @@ set.seed(1234)
 
 
 #create exp dir if not exist
-mainDir <- paste0("../media/runs/", runID, "/data/experiments/")
+mainDir <- paste0(runs.dir, runID, "/data/experiments/")
 subDir <- expTitle
 if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
 	dir.create(file.path(mainDir, subDir))
@@ -38,7 +45,7 @@ if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
 
 print("> Processing sample..")
 
-dir <- paste0("../media/runs/", runID, "/data/raw_uploads/", uploadName, "/")
+dir <- paste0(runs.dir, runID, "/data/raw_uploads/", uploadName, "/")
 
 # Load the dataset
 data <- load.data(dir, uploadType, uploadName)
@@ -52,11 +59,11 @@ print("> Clustering..")
 data <- find.clusters(data, clusteringResolution, nDims)
 
 print("> Dimensionality Reduction..")
-data <- reduce.dimensions(data, nDims, runs.dir)
+data <- reduce.dimensions(data, nDims, runs.dir, expTitle)
 
 #run trajectory to plot pseudotime trajectory
 print("> Trajectory analysis..")
-run.trajectory(data, c(), runs.dir)
+run.trajectory(data, c(), runs.dir, expTitle)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
 

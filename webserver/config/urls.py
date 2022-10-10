@@ -47,7 +47,7 @@ urlpatterns = [
     #r-scripts runners
     path("run_r_script/qc_metrics/<str:run_id>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>", views.run_r_script_qc_metrics, name="r-qc-metrics"),
     path("run_r_script/elbow_plot/<str:run_id>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>", views.run_r_script_elbow_plot, name="r-elbow-plot"),
-    path("run_r_script/run_experiment/<str:run_id>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>/<str:clustering_res>", views.run_r_script_elbow_plot, name="r-elbow-plot"),
+    path("run_r_script/run_experiment/<str:run_id>/<str:exp_title>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>/<str:clustering_res>", views.run_r_script_run_experiment, name="r-run-exp"),
 
     #here you can pass a full saved degs list or any list of genes
     path("json_find_gene_intersection/<str:run_id>/<str:exp_id>/<str:cluster_id>/<str:genes_list>", views.workspace, name="find_gene_intersection")

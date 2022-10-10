@@ -140,24 +140,30 @@
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">Experiment Title</span>
                                 <input id="txt-run-exp-title" type="text" class="form-control" placeholder="E10_prethalamus_subclustering" aria-label="" aria-describedby="basic-addon2" value="">
                               </div>
+                              <span>You can use only letters, numbers and underscore (_)</span>
                               <div class="input-group mt-3">
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">nDims</span>
-                                <input id="txt-run-exp-n-dims" type="text" class="form-control" placeholder="30" aria-label="" aria-describedby="basic-addon2" value="">
+                                <input id="txt-run-exp-n-dims" type="text" class="form-control" placeholder="30" aria-label="" aria-describedby="basic-addon2" value="50">
                               </div>
                               <div class="input-group mt-3">
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">Clustering Resolution</span>
-                                <input id="txt-run-exp-clustering-res" type="text" class="form-control" placeholder="0.8" aria-label="" aria-describedby="basic-addon2" value="">
+                                <input id="txt-run-exp-clustering-res" type="text" class="form-control" placeholder="0.8" aria-label="" aria-describedby="basic-addon2" value="1.2">
                               </div>
                             </div>
                             <br />
-                            <button id="btn-accordion-elbow-run" class="btn btn-small btn-primary">Run</button>
+                            <button id="btn-accordion-run-exp-run" class="btn btn-small btn-primary">Run</button>
                             <div id="accordion-run-exp-spinner" class="text-center d-none">
                               <div class="spinner-border text-secondary" role="status">
                                 <span class="sr-only">Loading...</span>
                               </div>
                             </div>
-                            <div id="accordion-elbow-container" class="d-none text-center">
-                              <img src="" width="60%" />
+                            <div id="accordion-run-exp-container" class="d-none text-center">
+                              <strong>UMAP:</strong><br />
+                              <img id="img-run-exp-umap" src="" width="60%" /><br />
+                              <strong>t-SNE:</strong><br />
+                              <img id="img-run-exp-tsne" src="" width="60%" /><br />
+                              <strong>Processed Data:</strong><br />
+                              data.rds ( <a id="lnk-run-exp-data-rds" href="" target="_self"><i class="fas fa-download"></i> Download</a> )
                             </div>
                           </div>
                         </div>

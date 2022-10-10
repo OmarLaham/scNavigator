@@ -44,6 +44,8 @@ $(document).ready(function() {
                     //console.log(data);
                     const img_src = data["img_src"];
 
+                    //remove previous response result then show new response
+                    //$('#accordion-filtering-container img').attr("src", "");
                     $('#accordion-filtering-container img').attr("src", img_src);
 
                     //hide spinner
@@ -72,7 +74,7 @@ $(document).ready(function() {
         const percentMT = $('#txt-percent-mt').val();
         const nDims = $('#txt-elbow-n-dims').val();
 
-        json_url = `/run_r_script/elbow_plot/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}`
+        json_url = `/run_r_script/elbow_plot/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}`;
         $.get(json_url, function(response) {
         })
             .done(function(response) {
@@ -82,6 +84,8 @@ $(document).ready(function() {
                     //console.log(data);
                     const img_src = data["img_src"];
 
+                    //remove previous response result then show new response
+                    //$('#accordion-elbow-container img').attr("src", "");
                     $('#accordion-elbow-container img').attr("src", img_src);
 
                     //hide spinner
@@ -100,17 +104,20 @@ $(document).ready(function() {
             })
     });
 
-    $('#btn-run-exp-run').click(function () {
+     $('#btn-accordion-run-exp-run').click(function () {
 
         //show spinner
-        $('#accordion-elbow-spinner').removeClass("d-none")
+        $('#accordion-run-exp-spinner').removeClass("d-none")
 
         const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
         const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
         const percentMT = $('#txt-percent-mt').val();
-        const nDims = $('#txt-elbow-n-dims').val();
+        //TODO: validate exp title: only letters, numbers and _ (underscore)
+        const expTitle = $("#txt-run-exp-title").val();
+        const nDims = $('#txt-run-exp-n-dims').val();
+        const clusteringRes = $('#txt-run-exp-clustering-res').val();
 
-        json_url = `/run_r_script/elbow_plot/${runID}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}`
+        json_url = `/run_r_script/run_experiment/${runID}/${expTitle}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}/${clusteringRes}`
         $.get(json_url, function(response) {
         })
             .done(function(response) {
@@ -118,17 +125,25 @@ $(document).ready(function() {
 
                     let data = response;
                     //console.log(data);
-                    const img_src = data["img_src"];
+                    const umap_img_src = data["umap_img_src"];
+                    const tsne_img_src = data["tsne_img_src"];
+                    const data_rds_href = data["data_rds_href"];
 
-                    $('#accordion-elbow-container img').attr("src", img_src);
+                    //remove previous response result then show new response
+                    //('#img-run-exp-umap').attr("src", "");
+                    $('#img-run-exp-umap').attr("src", umap_img_src);
+                    //$('#img-run-exp-tsne').attr("src", "");
+                    $('#img-run-exp-tsne').attr("src", tsne_img_src);
+                    //$('#lnk-run-exp-data-rds').attr("href", "");
+                    $('#lnk-run-exp-data-rds').attr("href", data_rds_href);
 
                     //hide spinner
-                    $('#accordion-elbow-spinner').addClass("d-none");
+                    $('#accordion-run-exp-spinner').addClass("d-none");
 
                     //show img
-                    $('#accordion-elbow-container').hide();
-                    $('#accordion-elbow-container').removeClass('d-none')
-                    $('#accordion-elbow-container').fadeIn();
+                    $('#accordion-run-exp-container').hide();
+                    $('#accordion-run-exp-container').removeClass('d-none')
+                    $('#accordion-run-exp-container').fadeIn();
 
 
                 }

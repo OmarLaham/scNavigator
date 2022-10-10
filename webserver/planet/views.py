@@ -98,15 +98,23 @@ def run_r_script_elbow_plot(request, run_id, upload_name, min_nfeature_rna, max_
 
     return JsonResponse(context)
 
-def run_r_script_run_experiment(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
+def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
 
     subprocess.run(
         ["conda", "run", "-n", "single-cell", "Rscript",
          path.join(settings.SCRIPTS_DIR, "run_experiment.R"),
-         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
+         run_id, str(exp_title), upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
 
     context = {
-        "umap_img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "umap.png").split("/media/")[1]
+
+        "umap_img_src": "http://localhost:8000/media/" +
+                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap.png").split("/media/")[1],
+        "tsne_img_src": "http://localhost:8000/media/" +
+                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne.png").split("/media/")[1],
+        # "umap_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap_cell_embedings.png").split("/media/")[1],
+        # "tsne_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_cell_embeddings.png").split("/media/")[1],
+        "data_rds_href": "http://localhost:8000/media/" +
+                         path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "data.rds").split("/media/")[1]
     }
 
     return JsonResponse(context)

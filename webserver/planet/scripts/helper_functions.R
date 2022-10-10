@@ -85,7 +85,7 @@ find.clusters <- function(data, clustering.res, nDims) {
 
 }
 #dimensionality reduction UMAP and t-SNE
-reduce.dimensions <- function(data, nDims, runs.dir) {
+reduce.dimensions <- function(data, nDims, runs.dir, expTitle) {
 
 	#Run non-linear dimensional reduction (UMAP/tSNE) and save plots
 	data <- RunUMAP(data, dims = 1:nDims)
@@ -93,25 +93,25 @@ reduce.dimensions <- function(data, nDims, runs.dir) {
 	
 	#plot UMAP
 	p <- DimPlot(data, reduction = "umap")
-	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "umap.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expTitle, "/"), device = "png", filename = "umap.png", plot = p)
 	print("Saved UMAP Plot")
 	
 	#export UMAP cell embeddings (coords) for better visualization than Seurat plots
 	umap.cell.embeddings <- as.data.frame(data[["umap"]]@cell.embeddings)
-	write.csv(umap.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expID, "/umap_cell_embedding.csv"))
+	write.csv(umap.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expTitle, "/umap_cell_embeddings.csv"))
 	
 	
 	#plot t-SNE
 	p <- DimPlot(data, reduction = "tsne")
-	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "tsne.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expTitle, "/"), device = "png", filename = "tsne.png", plot = p)
 	print("Saved t-SNE Plot")
 	
 	#export t-SNE cell embeddings (coords) for better visualization than Seurat plots
 	tsne.cell.embeddings <- as.data.frame(data[["tsne"]]@cell.embeddings)
-	write.csv(tsne.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expID, "/tsne_cell_embedding.csv"))
+	write.csv(tsne.cell.embeddings, paste0(runs.dir, runID, "/data/experiments/", expTitle, "/tsne_cell_embeddings.csv"))
 	
 	#save .rds
-	saveRDS(data, file=paste0(runs.dir, runID, "/data/experiments/", expID, "/data.rds"))
+	saveRDS(data, file=paste0(runs.dir, runID, "/data/experiments/", expTitle, "/data.rds"))
 	print("Saved data as .rds")	
 	
 	#return processed seurat object
@@ -135,7 +135,7 @@ get_earliest_principal_node <- function(cds, time_bin="130-170"){
 
 
 #data is your seurat object
-run.trajectory <- function(data, root.cell.ids = c(), runs.dir) {
+run.trajectory <- function(data, root.cell.ids = c(), runs.dir, expTitle) {
 
 	#We can convert the Seurat object to a CellDataSet object using the as.cell_data_set() function from SeuratWrappers
 	
@@ -163,7 +163,7 @@ run.trajectory <- function(data, root.cell.ids = c(), runs.dir) {
 	  group_label_size = 3
 	)
 	
-	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expID, "/"), device = "png", filename = "trajectory_pseudotime_plot.png", plot = p)
+	ggsave(path = paste0(runs.dir, runID, "/data/experiments/", expTitle, "/"), device = "png", filename = "trajectory_pseudotime_plot.png", plot = p)
 	print("> Saved pseudotime plot.")
 	
 }
