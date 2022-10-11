@@ -2,6 +2,8 @@
 const runID = 1;
 const uploadName = "GSM3860733_E10";
 const nDims = 50;
+var expTitle = undefined;
+var selectedCluster = undefined;
 
 $(document).ready(function() {
    $(".lnk-elbow-plot").click(function() {
@@ -113,9 +115,10 @@ $(document).ready(function() {
         const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
         const percentMT = $('#txt-percent-mt').val();
         //TODO: validate exp title: only letters, numbers and _ (underscore)
-        const expTitle = $("#txt-run-exp-title").val();
+        expTitle = $("#txt-run-exp-title").val(); // update the global var here for next operations
         const nDims = $('#txt-run-exp-n-dims').val();
         const clusteringRes = $('#txt-run-exp-clustering-res').val();
+
 
         json_url = `/run_r_script/run_experiment/${runID}/${expTitle}/${uploadName}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}/${clusteringRes}`
         $.get(json_url, function(response) {
@@ -152,5 +155,116 @@ $(document).ready(function() {
                 alert( "Error. Please try again later." );
             })
     });
+
+
+    $("#lnk-find-all-degs").click(function() {
+        //show spinner
+        $('#find-degs-spinner').removeClass("d-none")
+
+        //TODO: remove next line . it's temp
+        const expTitle = 'P14_Prime';
+
+        json_url = `/run_r_script/full_dea/${runID}/${expTitle}`
+        $.get(json_url, function(response) {
+        })
+            .done(function(response) {
+                if (response) {
+
+                    //re-init HTML items
+                    $('#ddl-find-clusters-degs ul').html("");
+                    $('#selected-cluster-wrapper').addClass('d-none');
+                    $('#ddl-find-clusters-degs').addClass("d-none");
+
+                    let data = response;
+                    console.log(data);
+
+                    let clusters = data["clusters"] // avaiable clusters
+                    let cluster_1_degs_html = data["cluster_1_degs_html"] //dict: clusterNum  -> HTML tbody content
+
+                    //fill table with DEGs for first cluster
+                    $('#tbl-cluster-degs tbody').html(cluster_1_degs_html);
+
+                    //hide spinner
+                    $('#find-degs-spinner').addClass("d-none");
+
+
+                    //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
+                    var ddlFindClustersDegsHTML = ""
+                    for (var i = 0; i < clusters.length; i++) {
+                        ddlFindClustersDegsHTML += '<i><a class="dropdown-item" href="#" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></i>';
+                    }
+                    $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
+                    $("#ddl-find-clusters-degs").val(clusters[0]);
+                    $("#selected-cluster").text(clusters[0]);
+                    $('#selected-cluster-wrapper').removeClass('d-none');
+                    $('#ddl-find-clusters-degs').removeClass("d-none");
+
+                    //fill table with DEGs for cluster 0
+                    $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+
+                    //hide spinner
+                    $('#find-degs-spinner').addClass("d-none");
+
+                }
+            })
+            .fail(function() {
+                alert( "Error. Please try again later." );
+            })
+    });
+
+    //On selected cluster change: generate and load DEGs table
+    $("#ddl-find-clusters-degs li a").click(function(){
+
+      $(".btn:first-child").text($(this).text());
+      $(".btn:first-child").val($(this).text());
+      selectedCluster = $(this).data("cluster");
+
+      //TODO: remove next line . it's temp
+        const expTitle = 'P14_Prime';
+
+        json_url = `/run_r_script/full_dea/${runID}/${expTitle}`
+        $.get(json_url, function(response) {
+        })
+            .done(function(response) {
+                if (response) {
+
+                    $('#selected-cluster-wrapper').addClass('d-none');
+                    $('#ddl-find-clusters-degs').addClass("d-none");
+
+                    let data = response;
+                    console.log(data);
+
+                    let cluster_degs_html = data["cluster_degs_html"] //dict: clusterNum  -> HTML tbody content
+
+                    //fill table with DEGs for cluster 0
+                    $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+
+                    //hide spinner
+                    $('#find-degs-spinner').addClass("d-none");
+
+                    //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
+                    var ddlFindClustersDegsHTML = ""
+                    for (var i = 0; i < clusters.length; i++) {
+                        ddlFindClustersDegsHTML += '<i><a class="dropdown-item" href="#" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></i>';
+                    }
+                    $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
+                    $("#ddl-find-clusters-degs").val(clusters[0]);
+                    $('#selected-cluster-wrapper').removeClass('d-none');
+                    $('#ddl-find-clusters-degs').removeClass("d-none");
+
+                    //fill table with DEGs for cluster 0
+                    $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+
+                    //hide spinner
+                    $('#find-degs-spinner').addClass("d-none");
+
+                }
+            })
+            .fail(function() {
+                alert( "Error. Please try again later." );
+            })
+
+   });
+
 
 });

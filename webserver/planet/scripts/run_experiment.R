@@ -10,13 +10,6 @@ app.dir = paste0(root.dir, "planet/")
 scripts.dir = paste0(app.dir, "scripts/")
 runs.dir = paste0(app.dir, "media/runs/")
 
-#fix
-if (packageVersion('Matrix') != '1.3.2') {
-	remove.packages("Matrix")
-	packageurl <- "https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.3-2.tar.gz"
-	install.packages(packageurl, repos=NULL, type="source")
-}
-
 source(paste0(scripts.dir, 'helper_functions.R'))
 
 #commandArgs picks up the variables you pass from the command line

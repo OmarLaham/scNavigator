@@ -34,7 +34,7 @@ from subprocess import Popen, PIPE
 
 import planet.utils.helper_functions as hf
 
-
+default_pval_thresh = 0.05
 
 def start(request):
 
@@ -115,6 +115,86 @@ def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfe
         # "tsne_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_cell_embeddings.png").split("/media/")[1],
         "data_rds_href": "http://localhost:8000/media/" +
                          path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "data.rds").split("/media/")[1]
+    }
+
+    return JsonResponse(context)
+
+def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
+
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "list_clusters_dea_first.R"),
+         run_id, str(exp_title)])
+
+    #after Rscript you will have clusters.csv and cluster_i.csv(s) in /run_dir/run_id/data/experiments/exp_title/dea
+
+    exp_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+
+    df_clusters_path = path.join(exp_path, "clusters.csv")
+    if not path.exists(df_clusters_path):
+        raise Exception("Internal Error: can't find:", df_clusters_path)
+
+    clusters = pd.read_csv(df_clusters_path)["levels(data)"].values.tolist()
+
+    #generate tbody HTML for first cluster and store in cluster_1_degs_html
+    df_cluster_degs_path = path.join(exp_path, "cluster_{0}_dea.csv".format(clusters[0]))
+    if not path.exists(df_cluster_degs_path):
+        raise Exception("Internal Error: can't find:", df_cluster_degs_path)
+
+    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=0)
+    df_cluster_degs = df_cluster_degs[df_cluster_degs["p_val"] <= default_pval_thresh]
+
+    html = ""
+    for index, row in df_cluster_degs.iterrows():
+        html += "<tr>"
+        html += "<td>cluster_{0}".format(index) + "</td>"
+        html += "<td>" + str(row["avg_log2FC"]) + "</td>"
+        html += "<td>" + str(row["p_val"]) + "</td>"
+        html += "<td>" + str(row["p_val_adj"]) + "</td>"
+        html += "</tr"
+
+    cluster_1_degs_html = html
+
+
+    context = {
+        "clusters": clusters,
+        "cluster_1_degs_html": cluster_1_degs_html
+    }
+
+    return JsonResponse(context)
+
+def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
+
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "dea_cluster.R"),
+         run_id, str(exp_title), str(exp_title)])
+
+    #after Rscript you will have clusters.csv and cluster_i.csv(s) in /run_dir/run_id/data/experiments/exp_title/dea
+    exp_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+
+    #generate tbody HTML for first cluster and store in cluster_1_degs_html
+    df_cluster_degs_path = path.join(exp_path, "cluster_{0}_dea.csv".format(cluster))
+    if not path.exists(df_cluster_degs_path):
+        raise Exception("Internal Error: can't find:", df_cluster_degs_path)
+
+    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=0)
+    df_cluster_degs = df_cluster_degs[df_cluster_degs["p_val"] <= default_pval_thresh]
+
+    html = ""
+    for index, row in df_cluster_degs.iterrows():
+        html += "<tr>"
+        html += "<td>cluster_{0}".format(index) + "</td>"
+        html += "<td>" + str(row["avg_log2FC"]) + "</td>"
+        html += "<td>" + str(row["p_val"]) + "</td>"
+        html += "<td>" + str(row["p_val_adj"]) + "</td>"
+        html += "</tr"
+
+    cluster_1_degs_html = html
+
+
+    context = {
+        "cluster_degs_html": cluster_1_degs_html
     }
 
     return JsonResponse(context)
