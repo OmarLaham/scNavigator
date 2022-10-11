@@ -146,12 +146,12 @@ def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
 
     html = ""
     for index, row in df_cluster_degs.iterrows():
-        html += "<tr>"
+        html += "<tr class='text-center'>"
         html += "<td>cluster_{0}".format(index) + "</td>"
         html += "<td>" + str(row["avg_log2FC"]) + "</td>"
         html += "<td>" + str(row["p_val"]) + "</td>"
         html += "<td>" + str(row["p_val_adj"]) + "</td>"
-        html += "</tr"
+        html += "</tr>"
 
     cluster_1_degs_html = html
 

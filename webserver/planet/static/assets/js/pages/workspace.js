@@ -157,14 +157,14 @@ $(document).ready(function() {
     });
 
 
-    $("#lnk-find-all-degs").click(function() {
+    $("#lnk-exp-degs").click(function() {
         //show spinner
         $('#find-degs-spinner').removeClass("d-none")
 
         //TODO: remove next line . it's temp
         const expTitle = 'P14_Prime';
 
-        json_url = `/run_r_script/full_dea/${runID}/${expTitle}`
+        json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
         $.get(json_url, function(response) {
         })
             .done(function(response) {
@@ -195,12 +195,12 @@ $(document).ready(function() {
                     }
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $("#ddl-find-clusters-degs").val(clusters[0]);
-                    $("#selected-cluster").text(clusters[0]);
+                    $("#selected-cluster").text("cluster_" + clusters[0]);
                     $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
                     //fill table with DEGs for cluster 0
-                    $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+                    $('#tbl-cluster-degs tbody').html(cluster_1_degs_html);
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
@@ -222,7 +222,7 @@ $(document).ready(function() {
       //TODO: remove next line . it's temp
         const expTitle = 'P14_Prime';
 
-        json_url = `/run_r_script/full_dea/${runID}/${expTitle}`
+        json_url = `/run_r_script/dea_cluster/${runID}/${expTitle}/${selectedCluster}`
         $.get(json_url, function(response) {
         })
             .done(function(response) {

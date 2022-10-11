@@ -13,6 +13,7 @@ source(paste0(scripts.dir, 'helper_functions.R'))
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
+expTitle <- args[[2]];
 
 exp.dir <- paste0(runs.dir, runID, "/data/experiments/", expTitle, "/")
 
@@ -45,8 +46,8 @@ write.csv(clusters, clusters.export.path)
 #run DEA for first cluster only
 
 
-cluster.num <- 1
-print(paste("Cluster:", cluster.num, "/", length(levels(data)) - 1))
+cluster.num <- 0
+print(paste("Cluster:", cluster.num, ".."))
 
 dea.res <- as.data.frame(FindMarkers(data, ident.1 = cluster.num, max.cells.per.ident = 50))
 dea.export.path <- paste0(exp.dir, "dea/cluster_", cluster.num, "_dea.csv")
