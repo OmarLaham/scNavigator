@@ -77,6 +77,7 @@ def get_saved_deg_list(request, run_id, deg_list_id):
         raise Exception("Internal Error: Can't find", list_path)
 
     df_deg_list = pd.read_csv(list_path)
+    df_deg_list = df_deg_list[df_deg_list["p_val"] <= default_pval_thresh]
 
     deg_list = []
 

@@ -263,5 +263,13 @@ $(document).ready(function() {
 
    });
 
+    //save current DEG list as a SAVED DEG LIST
+    $('#lnk-save-as-deg-list').click(function () {
 
+    });
+
+    //intersect DEG list from current cluster with one or more SAVED DEG LIST(S)
+    $('#lnk-intersect-with').click(function () {
+
+    });
 });
