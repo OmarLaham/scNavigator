@@ -121,10 +121,13 @@ def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfe
 
 def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
 
-    subprocess.run(
-        ["conda", "run", "-n", "single-cell", "Rscript",
-         path.join(settings.SCRIPTS_DIR, "list_clusters_dea_first.R"),
-         run_id, str(exp_title)])
+    # run Rscript to get clusters and DEGs for first cluster only if not run earlier for this exp.
+    if not path.exists(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "clusters.csv")) \
+        or not path.exists(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "cluster_0_dea.csv")):
+        subprocess.run(
+            ["conda", "run", "-n", "single-cell", "Rscript",
+             path.join(settings.SCRIPTS_DIR, "list_clusters_dea_first.R"),
+             run_id, str(exp_title)])
 
     #after Rscript you will have clusters.csv and cluster_i.csv(s) in /run_dir/run_id/data/experiments/exp_title/dea
 
@@ -147,7 +150,7 @@ def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
     html = ""
     for index, row in df_cluster_degs.iterrows():
         html += "<tr class='text-center'>"
-        html += "<td>cluster_{0}".format(index) + "</td>"
+        html += "<td>{0}".format(index) + "</td>"
         html += "<td>" + str(row["avg_log2FC"]) + "</td>"
         html += "<td>" + str(row["p_val"]) + "</td>"
         html += "<td>" + str(row["p_val_adj"]) + "</td>"
@@ -165,10 +168,12 @@ def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
 
 def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
 
-    subprocess.run(
-        ["conda", "run", "-n", "single-cell", "Rscript",
-         path.join(settings.SCRIPTS_DIR, "dea_cluster.R"),
-         run_id, str(exp_title), str(exp_title)])
+    #run Rscript to get DEGs for this cluster only if not run earlier.
+    if not path.exists(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "cluster_{0}_dea.csv".format(cluster))):
+        subprocess.run(
+            ["conda", "run", "-n", "single-cell", "Rscript",
+             path.join(settings.SCRIPTS_DIR, "dea_cluster.R"),
+             run_id, str(exp_title), str(cluster)])
 
     #after Rscript you will have clusters.csv and cluster_i.csv(s) in /run_dir/run_id/data/experiments/exp_title/dea
     exp_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
@@ -183,12 +188,12 @@ def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
 
     html = ""
     for index, row in df_cluster_degs.iterrows():
-        html += "<tr>"
-        html += "<td>cluster_{0}".format(index) + "</td>"
+        html += "<tr class='text-center'>"
+        html += "<td>{0}".format(index) + "</td>"
         html += "<td>" + str(row["avg_log2FC"]) + "</td>"
         html += "<td>" + str(row["p_val"]) + "</td>"
         html += "<td>" + str(row["p_val_adj"]) + "</td>"
-        html += "</tr"
+        html += "</tr>"
 
     cluster_1_degs_html = html
 

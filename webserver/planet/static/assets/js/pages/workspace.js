@@ -176,7 +176,7 @@ $(document).ready(function() {
                     $('#ddl-find-clusters-degs').addClass("d-none");
 
                     let data = response;
-                    console.log(data);
+                    //console.log(data);
 
                     let clusters = data["clusters"] // avaiable clusters
                     let cluster_1_degs_html = data["cluster_1_degs_html"] //dict: clusterNum  -> HTML tbody content
@@ -191,7 +191,7 @@ $(document).ready(function() {
                     //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
                     var ddlFindClustersDegsHTML = ""
                     for (var i = 0; i < clusters.length; i++) {
-                        ddlFindClustersDegsHTML += '<i><a class="dropdown-item" href="#" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></i>';
+                        ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
                     }
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $("#ddl-find-clusters-degs").val(clusters[0]);
@@ -201,6 +201,7 @@ $(document).ready(function() {
 
                     //fill table with DEGs for cluster 0
                     $('#tbl-cluster-degs tbody').html(cluster_1_degs_html);
+                    $('#tbl-cluster-degs').removeClass("d-none");
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
@@ -213,13 +214,15 @@ $(document).ready(function() {
     });
 
     //On selected cluster change: generate and load DEGs table
-    $("#ddl-find-clusters-degs li a").click(function(){
+    $(document).on("click", ".find-cluster-degs-item", function(){
 
-      $(".btn:first-child").text($(this).text());
-      $(".btn:first-child").val($(this).text());
-      selectedCluster = $(this).data("cluster");
+        $('#selected-cluster-wrapper').addClass('d-none');
+        $('#tbl-cluster-degs tbody').html("");
+        $('#find-degs-spinner').removeClass("d-none");
 
-      //TODO: remove next line . it's temp
+        selectedCluster = $(this).data("cluster");
+
+        //TODO: remove next line . it's temp
         const expTitle = 'P14_Prime';
 
         json_url = `/run_r_script/dea_cluster/${runID}/${expTitle}/${selectedCluster}`
@@ -228,11 +231,8 @@ $(document).ready(function() {
             .done(function(response) {
                 if (response) {
 
-                    $('#selected-cluster-wrapper').addClass('d-none');
-                    $('#ddl-find-clusters-degs').addClass("d-none");
-
                     let data = response;
-                    console.log(data);
+                    //console.log(data);
 
                     let cluster_degs_html = data["cluster_degs_html"] //dict: clusterNum  -> HTML tbody content
 
@@ -242,18 +242,14 @@ $(document).ready(function() {
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
 
-                    //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
-                    var ddlFindClustersDegsHTML = ""
-                    for (var i = 0; i < clusters.length; i++) {
-                        ddlFindClustersDegsHTML += '<i><a class="dropdown-item" href="#" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></i>';
-                    }
+
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
-                    $("#ddl-find-clusters-degs").val(clusters[0]);
+                    $("#ddl-find-clusters-degs").val(selectedCluster);
                     $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
-                    //fill table with DEGs for cluster 0
-                    $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+                    //fill table with DEGs for selected cluster
+                    $('#tbl-cluster-degs').removeClass("d-none");
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
