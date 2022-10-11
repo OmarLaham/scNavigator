@@ -6,26 +6,6 @@ var expTitle = undefined;
 var selectedCluster = undefined;
 
 $(document).ready(function() {
-   $(".lnk-elbow-plot").click(function() {
-        let rawUpload = $(this).data("raw-upload");
-        $('#modal-elbow-plot').data("raw-upload", rawUpload);
-
-        var elbowPlotModal = new bootstrap.Modal(document.getElementById('modal-elbow-plot'), {
-            keyboard: false
-        })
-        elbowPlotModal.toggle();
-   });
-
-    $(".lnk-run-experiment").click(function() {
-        let rawUpload = $(this).data("raw-upload");
-        $('#modal-run-experiment').data("raw-upload", rawUpload);
-
-        var runExperimentModal = new bootstrap.Modal(document.getElementById('modal-run-experiment'), {
-            keyboard: false
-        })
-        runExperimentModal.toggle();
-   });
-
 
     $('#btn-accordion-filtering-run').click(function () {
 
@@ -265,11 +245,17 @@ $(document).ready(function() {
 
     //save current DEG list as a SAVED DEG LIST
     $('#lnk-save-as-deg-list').click(function () {
-
+        var saveAsDEGListModal = new bootstrap.Modal(document.getElementById('modal-save-as-deg-list'), {
+            keyboard: false
+        })
+        saveAsDEGListModal.toggle();
     });
 
     //intersect DEG list from current cluster with one or more SAVED DEG LIST(S)
     $('#lnk-intersect-with').click(function () {
-
+        var intersectClusterWithListModal = new bootstrap.Modal(document.getElementById('modal-intersect-cluster-with-list'), {
+            keyboard: false
+        })
+        intersectClusterWithListModal.toggle();
     });
 });
