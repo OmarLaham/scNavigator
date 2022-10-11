@@ -206,6 +206,7 @@ $(document).ready(function() {
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
 
+
                 }
             })
             .fail(function() {
@@ -216,11 +217,12 @@ $(document).ready(function() {
     //On selected cluster change: generate and load DEGs table
     $(document).on("click", ".find-cluster-degs-item", function(){
 
-        $('#selected-cluster-wrapper').addClass('d-none');
-        $('#tbl-cluster-degs tbody').html("");
+
+        $('#tbl-cluster-degs tbody').html("<tr class='text-center'><td>..</td><td>..</td><td>..</td><td>..</td></tr>");
         $('#find-degs-spinner').removeClass("d-none");
 
         selectedCluster = $(this).data("cluster");
+        $("#selected-cluster").text("cluster_" + selectedCluster);
 
         //TODO: remove next line . it's temp
         const expTitle = 'P14_Prime';
@@ -244,7 +246,6 @@ $(document).ready(function() {
 
 
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
-                    $("#ddl-find-clusters-degs").val(selectedCluster);
                     $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
