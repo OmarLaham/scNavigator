@@ -55,6 +55,59 @@ def upload(request, run_id):
     html_template = loader.get_template('home/upload.html')
     return HttpResponse(html_template.render(context, request))
 
+def lst_saved_deg_lists(request, run_id):
+
+    lists_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists")
+    if not path.exists(lists_path):
+        raise Exception("Internal Error: Can't find", lists_path)
+
+    deg_lists = list(sorted(os.listdir(lists_path)))
+
+    context = {
+        'deg_lists': deg_lists
+    }
+
+    return JsonResponse(context)
+
+
+def get_saved_deg_list(request, run_id, deg_list_id):
+
+    list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
+    if not path.exists(list_path):
+        raise Exception("Internal Error: Can't find", list_path)
+
+    df_deg_list = pd.read_csv(list_path)
+
+    deg_list = []
+
+    for index, row in df_deg_list.iterrows():
+        gene_symbol = str(index)
+        p_val = str(row["p_val"])
+        adj_p_val = str(row["adj_p_val"])
+        avg_log2fc = str(row["avg.log2fc"])
+
+        deg_list.append([gene_symbol, p_val, adj_p_val, avg_log2fc])
+
+
+    context = {
+        'deg_list': deg_list
+    }
+
+    return JsonResponse(context)
+
+
+def del_saved_deg_list(request, run_id, deg_list_id):
+
+    list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
+    if not path.exists(list_path):
+        raise Exception("Internal Error: Can't find", list_path)
+
+    os.remove(list_path)
+
+    return JsonResponse({})
+
+
+
 def workspace(request, run_id):
 
     # validate run id

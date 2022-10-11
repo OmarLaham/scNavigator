@@ -36,9 +36,9 @@ urlpatterns = [
     path("workspace/run/<str:run_id>", views.workspace, name="workspace"),
 
     #saved degs lists & operations on them
-    path("json_saved_degs_lists/<str:run_id>", views.workspace, name="saved_degs_lists"), #be careful: (s) at end in (name) param
-    path("workspace/run/<str:run_id>/saved_degs_lists/<str:degs_list_id>", views.workspace, name="saved_degs_list"), #be careful: NO (s) at end in (name) param
-    path("delete_degs_list/<str:run_id>/<str:degs_list_id>", views.workspace, name="delete_degs_list"),
+    path("json_lst_saved_deg_lists/<str:run_id>", views.lst_saved_deg_lists, name="lst_saved_deg_lists"), #be careful: (s) at end in (name) param
+    path("workspace/run/<str:run_id>/saved_deg_list/<str:deg_list_id>", views.get_saved_deg_list, name="get_saved_deg_list"), #be careful: NO (s) at end in (name) param
+    path("del_saved_deg_list/<str:run_id>/<str:deg_list_id>", views.del_saved_deg_list, name="del_saved_deg_list"),
 
     #running experiments
     path("run_epx_from_uploads/<str:run_id>/<str:upload_id>", views.workspace, name="run_exp_from_uploads"),
