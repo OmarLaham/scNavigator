@@ -1,6 +1,6 @@
 //tmp
 const runID = 1;
-const uploadName = "GSM3860733_E10";
+var uploadName = "GSM3860733_E10";
 const nDims = 50;
 var expTitle = "P14_Prime"; //TODO: change to undefined
 var selectedCluster = "0" //TODO: change to undefined;
@@ -10,6 +10,7 @@ var selectedClusterDEGListAsStr = undefined;
 var savedDEGLists = [];
 
 var saveAsDEGListModal = undefined;
+var createDEGListManuallyModal = undefined;
 
 $(document).ready(function() {
 
@@ -147,8 +148,7 @@ $(document).ready(function() {
         //show spinner
         $('#find-degs-spinner').removeClass("d-none")
 
-        //TODO: remove next line . it's temp
-        const expTitle = 'P14_Prime';
+
 
         json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
         $.get(json_url, function(response) {
@@ -300,6 +300,8 @@ $(document).ready(function() {
                         html += "<li class='saved-deg-lists-item'>";
                         html += $('#saved-deg-lists-item-template').html();
                         html = html.replace("saved_deg_list_id_placeholder", savedDEGLists[i]);
+                        let href = `/saved_deg_list/${runID}/${savedDEGLists[i]}`;
+                        html = html.replace("saved_deg_list_href_placeholder", href);
                         html += "</li>";
                     }
 
@@ -369,7 +371,7 @@ $(document).ready(function() {
             return;
         }
 
-        json_url = `workspace/run/${runID}/del_deg_list/${degListID}`;
+        json_url = `/workspace/run/${runID}/del_deg_list/${degListID}`;
 
         $.get(json_url, function (response) {
         })
@@ -404,8 +406,6 @@ $(document).ready(function() {
         const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
         const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
         const percentMT = $('#txt-percent-mt').val();
-        //TODO: validate exp title: only letters, numbers and _ (underscore)
-        expTitle = $("#txt-run-exp-title").val(); // update the global var here for next operations
         const nDims = $('#txt-run-exp-n-dims').val();
         const clusteringRes = $('#txt-run-exp-clustering-res').val();
 
@@ -418,7 +418,7 @@ $(document).ready(function() {
 
         //use workspace-data-source-template to add data source. Create an item... just remove the spinner when everything is fine.
         var html = $('#workspace-data-source-template').html();
-        html = html.replace("data_source_name_placeholder", data_source_name);
+        html = html.replaceAll("data_source_name_placeholder", data_source_name);
 
         $('#workspace-data-sources').append(html);
 
@@ -432,7 +432,8 @@ $(document).ready(function() {
                     let data = response;
 
                     //everything is fine. just remove the spinner ;)
-                    $('#workspace-data-source-new-spinner').remove();
+                    $('#workspace-data-source-new-spinner-' + data_source_name).remove();
+                    alert("Data source created from cluster!")
 
                 }
             })
@@ -441,6 +442,54 @@ $(document).ready(function() {
             })
 
 
+
+    });
+
+    //attach a new data source when click on load
+    $('.lnk-load-upload').click(function() {
+        let data_folder_name = $(this).data("raw-upload");
+        alert("Loaded " + data_folder_name);
+
+        uploadName = data_folder_name
+
+        $('#loaded-data').html(uploadName);
+    });
+
+
+    //save current DEG list as a SAVED DEG LIST
+    $('#btn-create-deg-list-manually').click(function () {
+        createDEGListManuallyModal = new bootstrap.Modal(document.getElementById('modal-create-deg-list-manually'), {
+            keyboard: false
+        });
+        createDEGListManuallyModal.toggle();
+    });
+
+    $('#modal-create-deg-list-manually-submit').click(function () {
+
+        const del_deg_list = $('#txt-modal-create-deg-list-manually-list-id').val();
+        const genes = $('#txt-modal-create-deg-list-manually-genes').val();
+
+        json_url = `/create_deg_list_manually/${runID}/${del_deg_list}/${genes}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+
+                    //refresh ddl list
+                    loadSavedDEGLists();
+
+                    alert("Created Successfully");
+
+                    createDEGListManuallyModal.toggle();
+
+                }
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
 
     });
 

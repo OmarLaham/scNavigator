@@ -102,6 +102,72 @@ def del_saved_deg_list(request, run_id, deg_list_id):
 
     return JsonResponse({})
 
+def saved_deg_list(request, run_id, deg_list_id):
+
+    saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
+    if not path.exists(saved_deg_list_path):
+        raise Exception("Internal Error: Can't find", saved_deg_list_path)
+
+    df_saved_deg_list = pd.read_csv(saved_deg_list_path)
+
+    # get columns ready for intersection
+    colnames = list(df_saved_deg_list.columns)
+    colnames[0] = "gene"
+    df_saved_deg_list.columns = colnames
+    df_saved_deg_list = df_saved_deg_list[(df_saved_deg_list["p_val"] <= default_pval_thresh) | (pd.isna(df_saved_deg_list["p_val"]))] #NA condition is important for manually created lists
+
+    gene_rows = df_saved_deg_list.values.tolist()
+
+    tbl_html = "<tbody>"
+    for index, row in df_saved_deg_list.iterrows():
+        gene = row["gene"]
+        avg_log2FC = row["avg_log2FC"]
+        p_val = row["p_val"]
+        p_val_adj = row["p_val_adj"]
+
+        tbl_html += "<tr class='text-center'>"
+        tbl_html += "<td>{0}</td>".format(gene)
+        tbl_html += "<td>{0}</td>".format(avg_log2FC)
+        tbl_html += "<td>{0}</td>".format(p_val)
+        tbl_html += "<td>{0}</td>".format(p_val_adj)
+        tbl_html += "</tr>"
+    tbl_html += "</tbody>"
+
+    context = {
+        "listID": deg_list_id,
+        "tblHTML": tbl_html
+    }
+
+    html_template = loader.get_template('home/saved-deg-list.html')
+    return HttpResponse(html_template.render(context, request))
+
+    return JsonResponse(context)
+
+def create_deg_list_manually(request, run_id, deg_list_id, genes):
+
+    saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
+    if path.exists(saved_deg_list_path):
+        raise Exception("Internal Error: List ID already in Use.")
+
+    genes = genes.split(",")
+
+    header = ",p_val,avg_log2FC,pct.1,pct.2,p_val_adj\n"
+    lines = []
+
+    for gene in genes:
+        lines.append("{0},NA,NA,NA,NA,NA".format(gene))
+
+    lines = "\n".join(lines)
+
+    file_content = header + lines
+
+    with open(saved_deg_list_path, "w") as f:
+        f.write(file_content)
+
+    return JsonResponse({})
+
+
+
 def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_lists):
 
     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")

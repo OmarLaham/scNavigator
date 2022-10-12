@@ -39,6 +39,8 @@ urlpatterns = [
     path("json_lst_saved_deg_lists/<str:run_id>", views.lst_saved_deg_lists, name="lst_saved_deg_lists"), #be careful: (s) at end in (name) param
     path("save_deg_list/<str:run_id>/<str:exp_title>/<str:cluster>/<str:deg_list_id>", views.save_deg_list, name="save_deg_list"), #be careful: NO (s) at end in (name) param
     path("del_saved_deg_list/<str:run_id>/<str:deg_list_id>", views.del_saved_deg_list, name="del_saved_deg_list"),
+    path("saved_deg_list/<str:run_id>/<str:deg_list_id>", views.saved_deg_list, name="saved_deg_list"),
+    path("create_deg_list_manually/<str:run_id>/<str:deg_list_id>/<str:genes>", views.create_deg_list_manually, name="create_deg_list_manually"),
     #this view can be used for specific or all clusters if <str:clusters> == "all"
     path("cross_with_saved_deg_lists/<str:run_id>/<str:exp_title>/<str:clusters>/<str:saved_deg_lists>", views.cross_with_saved_deg_lists, name="cross_with_saved_deg_lists"),
 

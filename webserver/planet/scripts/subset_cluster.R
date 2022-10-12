@@ -53,9 +53,9 @@ data <- find.clusters(data, clusteringResolution, nDims)
 
 data <- subset(data, seurat.clusters = cluster)
 
-subset.export.path <- paste0(runs.dir, runID, "/data/raw_uploads/", subset.folder.name)
+subset.export.path <- paste0(runs.dir, runID, "/data/raw_uploads/", subset.folder.name, "/", subset.folder.name, ".rds")
 saveRDS(data, subset.export.path)
 
-print("Done with clustering and trajectory. UMAP and t-SNE generated.")
+print("Cluster subset saved.")
 
 

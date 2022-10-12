@@ -25,7 +25,7 @@
                         data_source_name_placeholder
                         <br />
                         <a href="javascript:;" class="lnk-load-upload" data-raw-upload="data_source_name_placeholder"><span class="text-success text-sm">Load</span></a>
-                        <div id="workspace-data-source-new-spinner">
+                        <div id="workspace-data-source-new-spinner-data_source_name_placeholder">
                           <div  class="spinner-border text-secondary" role="status">
                             <span class="sr-only">Loading...</span>
                           </div>
@@ -77,7 +77,7 @@
               <div class="row">
                 <div class="col-lg-10">
                   <div class="d-flex flex-column h-100">
-                    <h5 id="loaded-upload" class="font-weight-bolder">Loaded Data: GSM3860733_E10</h5>
+                    <h5 id="loaded-upload" class="font-weight-bolder">Loaded Data: <span id="loaded-data">GSM3860733_E10</span></h5>
 
                     <div class="accordion" id="accordionPanelsStayOpenExample">
 
@@ -538,6 +538,35 @@
       </div>
     </div>
     <!-- / run experiment modal -->
+
+    <!-- Create DEG List Manually modal -->
+      <div id="modal-create-deg-list-manually" class="modal" tabindex="-1" data-raw-upload="">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Create a DEGs List Manually</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group mt-3">
+                <span class="input-group-text bg-gray-300" id="basic-addon2">List ID</span>
+                <input id="txt-modal-create-deg-list-manually-list-id" type="text" class="form-control" placeholder="cell_type_i_markers" aria-label="" aria-describedby="basic-addon2" value="">
+              </div>
+              <span>You can use only letters, numbers, dots and underscore (_)</span>
+              <div class="input-group mt-3">
+                <span class="input-group-text bg-gray-300" id="basic-addon2">Genes</span>
+                <input id="txt-modal-create-deg-list-manually-genes" type="text" class="form-control" placeholder="Actb,Fth1,Sepw1" aria-label="" aria-describedby="basic-addon2" value="">
+              </div>
+              <span>This is <strong>Case Sensitive</strong>. Please don't use spaces, too.</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button id="modal-create-deg-list-manually-submit" type="button" class="submit btn btn-primary">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- / Create DEG List Manually modal -->
 
     <!-- intersect with DEG list(s) modal -->
     <div id="modal-intersect-cluster-with-list" class="modal" tabindex="-1" data-raw-upload="">
