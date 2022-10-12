@@ -308,6 +308,18 @@ def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
 
     return JsonResponse(context)
 
+def run_r_script_subset_cluster(request, run_id, upload_name, exp_title, cluster, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
+
+    folder_name = "{0}_{1}_cluster{2}".format(upload_name, exp_title, cluster)
+
+    subprocess.run(
+        ["conda", "run", "-n", "single-cell", "Rscript",
+         path.join(settings.SCRIPTS_DIR, "subset_cluster.R"),
+         run_id, str(upload_name), str(exp_title), str(cluster), str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
+
+
+    return JsonResponse({})
+
 def downloads(request):
 
     context = {}

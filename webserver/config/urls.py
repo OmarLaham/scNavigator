@@ -53,6 +53,8 @@ urlpatterns = [
     path("run_r_script/run_experiment/<str:run_id>/<str:exp_title>/<str:upload_name>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>/<str:clustering_res>", views.run_r_script_run_experiment, name="r-run-exp"),
     path("run_r_script/list_clusters_dea_first/<str:run_id>/<str:exp_title>", views.run_r_script_list_clusters_dea_first, name="r-list-clusters-dea-first"),
     path("run_r_script/dea_cluster/<str:run_id>/<str:exp_title>/<str:cluster>", views.run_r_script_dea_cluster, name="r-run-exp"),
+    #start experiment from cluster (subsetting)
+    path("run_r_script/subset_cluster/<str:run_id>/<str:upload_name>/<str:exp_title>/<str:cluster>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>/<str:clustering_res>", views.run_r_script_subset_cluster, name="r-subset-cluster"),
 
     #here you can pass a full saved degs list or any list of genes
     path("json_find_gene_intersection/<str:run_id>/<str:exp_id>/<str:cluster_id>/<str:genes_list>", views.workspace, name="find_gene_intersection")

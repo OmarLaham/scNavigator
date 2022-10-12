@@ -359,6 +359,7 @@ $(document).ready(function() {
 
     });
 
+    //TODO: implement delete
     $('.deg_list_del').click(function () {
 
         let degListID = $(this).data("deg-list-id");
@@ -395,6 +396,52 @@ $(document).ready(function() {
             keyboard: false
         })
         intersectClusterWithListModal.toggle();
+    });
+
+    //start experiment by subsetting a cluster. actually it will only subset and add to raw uploads
+    $('#lnk-cluster-exp').click(function () {
+
+        const minNFeatureRNA = $('#txt-min-nfeature-rna').val();
+        const maxNFeatureRNA = $('#txt-max-nfeature-rna').val();
+        const percentMT = $('#txt-percent-mt').val();
+        //TODO: validate exp title: only letters, numbers and _ (underscore)
+        expTitle = $("#txt-run-exp-title").val(); // update the global var here for next operations
+        const nDims = $('#txt-run-exp-n-dims').val();
+        const clusteringRes = $('#txt-run-exp-clustering-res').val();
+
+        let data_source_name = uploadName + "_" + expTitle + "_cluster_" + selectedCluster;
+
+        //scroll to data source to set attention
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#workspace-data-sources").offset().top
+        }, 1000);
+
+        //use workspace-data-source-template to add data source. Create an item... just remove the spinner when everything is fine.
+        var html = $('#workspace-data-source-template').html();
+        html = html.replace("data_source_name_placeholder", data_source_name);
+
+        $('#workspace-data-sources').append(html);
+
+        json_url = `/run_r_script/subset_cluster/${runID}/${uploadName}/${expTitle}/${selectedCluster}/${minNFeatureRNA}/${maxNFeatureRNA}/${percentMT}/${nDims}/${clusteringRes}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+
+                    //everything is fine. just remove the spinner ;)
+                    $('#workspace-data-source-new-spinner').remove();
+
+                }
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
+
+
+
     });
 
 

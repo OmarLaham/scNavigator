@@ -15,28 +15,28 @@ source(paste0(scripts.dir, 'helper_functions.R'))
 #commandArgs picks up the variables you pass from the command line
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
-expTitle <- args[[2]];
-uploadName <- args[[3]];
-nFeature.RNA.min <- as.integer(args[[4]]);
-nFeature.RNA.max <- as.integer(args[[5]]);
-percentMT <- as.integer(args[[6]]);
-nDims <- args[[7]];
-clusteringResolution <- as.double(args[[8]]);
-
+uploadName <- args[[2]];
+expTitle <- args[[3]];
+cluster <- args[[4]];
+nFeature.RNA.min <- as.integer(args[[5]]);
+nFeature.RNA.max <- as.integer(args[[6]]);
+percentMT <- as.integer(args[[7]]);
+nDims <- args[[8]];
+clusteringResolution <- as.double(args[[9]]);
 
 #very important to use same seed so we dont have different results for different runs
 set.seed(1234)
 
-
+subset.folder.name <- paste(uploadName, expTitle, cluster, sep="_")
 
 #create exp dir if not exist
-mainDir <- paste0(runs.dir, runID, "/data/experiments/")
-subDir <- expTitle
+mainDir <- paste0(runs.dir, runID, "/data/raw_uploads/")
+subDir <- subset.folder.name
 if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
 	dir.create(file.path(mainDir, subDir))
 }
 
-print("> Processing sample..")
+print("> subsetting sample..")
 
 dir <- paste0(runs.dir, runID, "/data/raw_uploads/", uploadName, "/")
 
@@ -51,12 +51,10 @@ data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percentMT)
 print("> Clustering..")
 data <- find.clusters(data, clusteringResolution, nDims)
 
-print("> Dimensionality Reduction..")
-data <- reduce.dimensions(data, nDims, runs.dir, expTitle)
+data <- subset(data, seurat.clusters = cluster)
 
-#run trajectory to plot pseudotime trajectory
-print("> Trajectory analysis..")
-run.trajectory(data, c(), runs.dir, expTitle)
+subset.export.path <- paste0(runs.dir, runID, "/data/raw_uploads/", subset.folder.name)
+saveRDS(data, subset.export.path)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
 
