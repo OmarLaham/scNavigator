@@ -125,7 +125,7 @@
                       </div>
                       <!-- / Accordion Elbow Plot -->
 
-                      <!-- Accordion Run Experiment Plot -->
+                      <!-- Accordion Run Experiment  -->
                       <div class="accordion-item">
                         <h2 class="accordion-header bg-gray-300 text-primary" id="panelsStayOpen-headingOne">
                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
@@ -140,7 +140,7 @@
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">Experiment Title</span>
                                 <input id="txt-run-exp-title" type="text" class="form-control" placeholder="E10_prethalamus_subclustering" aria-label="" aria-describedby="basic-addon2" value="">
                               </div>
-                              <span>You can use only letters, numbers and underscore (_)</span>
+                              <span>You can use only letters, numbers, dots and underscore (_)</span>
                               <div class="input-group mt-3">
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">nDims</span>
                                 <input id="txt-run-exp-n-dims" type="text" class="form-control" placeholder="30" aria-label="" aria-describedby="basic-addon2" value="50">
@@ -168,14 +168,14 @@
                           </div>
                         </div>
                       </div>
-                      <!-- / Accordion Run Experiment Plot -->
+                      <!-- / Accordion Run Experiment  -->
 
 
-                      <!-- Accordion Run Experiment Plot -->
+                      <!-- Accordion Cross with DBs  -->
                       <div class="accordion-item">
                         <h2 class="accordion-header bg-gray-300 text-primary" id="panelsStayOpen-headingOne">
                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-                            Cross with Gene Marker DB
+                            Cross clusters with Gene Marker DB
                           </button>
                         </h2>
                         <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
@@ -201,7 +201,36 @@
                           </div>
                         </div>
                       </div>
-                      <!-- / Accordion Run Experiment Plot -->
+                      <!-- / Accordion Cross with DBs  -->
+
+
+                      <!-- Accordion Cross with Saved DEG Lists -->
+                      <div class="accordion-item">
+                        <h2 class="accordion-header bg-gray-300 text-primary" id="panelsStayOpen-headingOne">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                            Cross clusters with Saved DEG Lists
+                          </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                          <div class="accordion-body">
+                            <strong>Important:</strong> Make sure you run "<strong>Find DEGs for Different Clusters</strong>" below before you run this step.
+                            <div id="accordion-cross-deg-lists-controls">
+
+                            </div>
+                            <br />
+                            <button id="btn-accordion-run-exp-run" class="btn btn-small btn-primary">Run</button>
+                            <div id="accordion-run-exp-spinner" class="text-center d-none">
+                              <div class="spinner-border text-secondary" role="status">
+                                <span class="sr-only">Loading...</span>
+                              </div>
+                            </div>
+                            <div id="accordion-cross-deg-lists-container" class="d-none text-center">
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- / Accordion Cross with DEG lists -->
 
                     </div>
 
@@ -454,7 +483,7 @@
 
     <!-- hidden code area -->
 
-    <!-- intersect with DEG list(s) modal -->
+    <!-- Save as DEG list modal -->
     <div id="modal-save-as-deg-list" class="modal" tabindex="-1" data-raw-upload="">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -464,11 +493,15 @@
           </div>
           <div class="modal-body">
             Choose a unique name for your DEGs list:
-            <!-- controls -->
+            <div class="input-group mt-3">
+              <span class="input-group-text bg-gray-300" id="basic-addon2">List Name</span>
+              <input id="txt-modal-save-deg-list-id" type="text" class="form-control" placeholder="deg_lst_E10_Hypo.NPCs" aria-label="" aria-describedby="basic-addon2" value="">
+            </div>
+            <span>You can use only letters, numbers, dots and underscore (_)</span>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Intersect</button>
+            <button id="modal-save-as-deg-list-submit" type="button" class="submit btn btn-primary">Save</button>
           </div>
         </div>
       </div>
@@ -488,10 +521,13 @@
             <div id="modal-intersect-deg-lists">
 
             </div>
+            <div id="modal-intersect-deg-lists-results">
+
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Intersect</button>
+            <button type="button" class="submit btn btn-primary">Intersect</button>
           </div>
         </div>
       </div>

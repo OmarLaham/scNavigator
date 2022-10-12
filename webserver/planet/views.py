@@ -25,6 +25,8 @@ import json
 import gzip
 from glob import glob, escape
 
+import shutil
+
 import os
 from os import path
 
@@ -57,42 +59,35 @@ def upload(request, run_id):
 
 def lst_saved_deg_lists(request, run_id):
 
+
     lists_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists")
     if not path.exists(lists_path):
         raise Exception("Internal Error: Can't find", lists_path)
 
-    deg_lists = list(sorted(os.listdir(lists_path)))
+    saved_deg_lists = list(sorted(os.listdir(lists_path)))
+    saved_deg_lists = [list.split(".csv")[0] for list in saved_deg_lists]
 
     context = {
-        'deg_lists': deg_lists
+        'saved_deg_lists': saved_deg_lists
     }
 
     return JsonResponse(context)
 
 
-def get_saved_deg_list(request, run_id, deg_list_id):
+def save_deg_list(request, run_id, exp_title, cluster, deg_list_id):
 
-    list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
-    if not path.exists(list_path):
-        raise Exception("Internal Error: Can't find", list_path)
+    #copy from one to another
+    source_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea",
+                            "cluster_{0}_dea.csv".format(cluster))
+    if not path.exists(source_path):
+        raise Exception("Internal Error: Can't find source:", source_path)
 
-    df_deg_list = pd.read_csv(list_path)
-    df_deg_list = df_deg_list[df_deg_list["p_val"] <= default_pval_thresh]
-
-    deg_list = []
-
-    for index, row in df_deg_list.iterrows():
-        gene_symbol = str(index)
-        p_val = str(row["p_val"])
-        adj_p_val = str(row["adj_p_val"])
-        avg_log2fc = str(row["avg.log2fc"])
-
-        deg_list.append([gene_symbol, p_val, adj_p_val, avg_log2fc])
+    saved_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(deg_list_id))
 
 
-    context = {
-        'deg_list': deg_list
-    }
+    shutil.copy(source_path, saved_list_path)
+
+    context = {}
 
     return JsonResponse(context)
 
@@ -107,6 +102,61 @@ def del_saved_deg_list(request, run_id, deg_list_id):
 
     return JsonResponse({})
 
+def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_lists):
+
+    dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+    clusters_dea_paths = []
+
+    saved_deg_lists = saved_deg_lists.split(",")
+
+    if clusters == "all":
+        clusters_dea_paths = list(sorted(os.listdir(dea_path)))
+        #fill with all available clusters from this experiment
+        clusters = pd.read_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "clusters.csv"))["levels(data)"].values.tolist()
+    else:
+        clusters = clusters.split(",")
+        for cluster in clusters:
+            clusters_dea_paths.append(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+
+    intersection_result = dict()
+
+    for cluster in clusters:
+
+        #intersection results for single cluster vs different saved deg lists
+        cluster_results = dict()
+
+        df_cluster_dea = pd.read_csv(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+        # get columns ready for intersection
+        colnames = list(df_cluster_dea.columns)
+        colnames[0] = "gene"
+        df_cluster_dea.columns = colnames
+        df_cluster_dea = df_cluster_dea[df_cluster_dea["p_val"] <= default_pval_thresh]
+
+        for saved_deg_list in saved_deg_lists:
+            saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(saved_deg_list))
+            df_saved_deg_list = pd.read_csv(saved_deg_list_path)
+
+            #get columns ready for intersection
+            colnames = list(df_saved_deg_list.columns)
+            colnames[0] = "gene"
+            df_saved_deg_list.columns = colnames
+            df_saved_deg_list = df_saved_deg_list[df_saved_deg_list["p_val"] <= default_pval_thresh]
+
+            #let's do intersection ;)
+
+            cluster_genes = df_cluster_dea["gene"].values.tolist()
+            saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
+
+            gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
+            cluster_results[saved_deg_list] = gene_intersection
+
+        intersection_result[cluster] = cluster_results
+
+    context = {
+        "intersection_result": intersection_result
+    }
+
+    return JsonResponse(context)
 
 
 def workspace(request, run_id):
@@ -198,24 +248,23 @@ def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
     if not path.exists(df_cluster_degs_path):
         raise Exception("Internal Error: can't find:", df_cluster_degs_path)
 
-    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=0)
+    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=False)
+    colnames = list(df_cluster_degs.columns)
+    colnames[0] = "gene"
+    df_cluster_degs.columns = colnames
+    df_cluster_degs = df_cluster_degs[["gene", "avg_log2FC", "p_val", "p_val_adj"]]
     df_cluster_degs = df_cluster_degs[df_cluster_degs["p_val"] <= default_pval_thresh]
+    cluster_0_degs_as_list = df_cluster_degs.values.tolist()
 
-    html = ""
-    for index, row in df_cluster_degs.iterrows():
-        html += "<tr class='text-center'>"
-        html += "<td>{0}".format(index) + "</td>"
-        html += "<td>" + str(row["avg_log2FC"]) + "</td>"
-        html += "<td>" + str(row["p_val"]) + "</td>"
-        html += "<td>" + str(row["p_val_adj"]) + "</td>"
-        html += "</tr>"
-
-    cluster_1_degs_html = html
-
+    cluster_0_degs_as_str = []
+    for i in range(len(cluster_0_degs_as_list)):
+        cluster_0_degs_as_str.append(",".join([str(val) for val in cluster_0_degs_as_list[i]]) + "\n")
+    cluster_0_degs_as_str = "".join(cluster_0_degs_as_str)
 
     context = {
         "clusters": clusters,
-        "cluster_1_degs_html": cluster_1_degs_html
+        "cluster_0_degs_as_list": cluster_0_degs_as_list,
+        "cluster_0_degs_as_str": cluster_0_degs_as_str
     }
 
     return JsonResponse(context)
@@ -237,23 +286,24 @@ def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
     if not path.exists(df_cluster_degs_path):
         raise Exception("Internal Error: can't find:", df_cluster_degs_path)
 
-    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=0)
+    df_cluster_degs = pd.read_csv(df_cluster_degs_path, index_col=False)
+    colnames = list(df_cluster_degs.columns)
+    colnames[0] = "gene"
+    df_cluster_degs.columns = colnames
+    df_cluster_degs = df_cluster_degs[["gene", "avg_log2FC", "p_val", "p_val_adj"]]
     df_cluster_degs = df_cluster_degs[df_cluster_degs["p_val"] <= default_pval_thresh]
 
-    html = ""
-    for index, row in df_cluster_degs.iterrows():
-        html += "<tr class='text-center'>"
-        html += "<td>{0}".format(index) + "</td>"
-        html += "<td>" + str(row["avg_log2FC"]) + "</td>"
-        html += "<td>" + str(row["p_val"]) + "</td>"
-        html += "<td>" + str(row["p_val_adj"]) + "</td>"
-        html += "</tr>"
 
-    cluster_1_degs_html = html
+    cluster_degs_as_list = df_cluster_degs.values.tolist()
 
+    cluster_degs_as_str = []
+    for i in range(len(cluster_degs_as_list)):
+        cluster_degs_as_str.append(",".join([str(val) for val in cluster_degs_as_list[i]]) + "\n")
+    cluster_degs_as_str = "".join(cluster_degs_as_str)
 
     context = {
-        "cluster_degs_html": cluster_1_degs_html
+        "cluster_degs_as_list": cluster_degs_as_list,
+        "cluster_degs_as_str": cluster_degs_as_str
     }
 
     return JsonResponse(context)

@@ -2,8 +2,14 @@
 const runID = 1;
 const uploadName = "GSM3860733_E10";
 const nDims = 50;
-var expTitle = undefined;
-var selectedCluster = undefined;
+var expTitle = "P14_Prime"; //TODO: change to undefined
+var selectedCluster = "0" //TODO: change to undefined;
+var selectedClusterDEGAsList = undefined;
+var selectedClusterDEGListAsStr = undefined;
+
+var savedDEGLists = [];
+
+var saveAsDEGListModal = undefined;
 
 $(document).ready(function() {
 
@@ -159,10 +165,26 @@ $(document).ready(function() {
                     //console.log(data);
 
                     let clusters = data["clusters"] // avaiable clusters
-                    let cluster_1_degs_html = data["cluster_1_degs_html"] //dict: clusterNum  -> HTML tbody content
+                    let clusterDEGAsList = data["cluster_0_degs_as_list"]; //dict: clusterNum  -> HTML tbody content
+                    selectedClusterDEGAsList = clusterDEGAsList;
+
+                    let clusterDEGAsStr = data["cluster_0_degs_as_str"];
+                    selectedClusterDEGListAsStr = clusterDEGAsStr;
+
+                    //fill table with DEGs for cluster 0
+                    var cluster_0_degs_html = "";
+                    let deg_file_rows = clusterDEGAsStr.split("\n");
+                    for(var i = 0; i < deg_file_rows.length; i++) {
+                        cluster_0_degs_html += "<tr class='text-center'>"
+                        let tds = deg_file_rows[i].split(",");
+                        for(var j = 0; j < tds.length; j++) {
+                            cluster_0_degs_html += "<td>" + tds[j] + "</td>";
+                        }
+                        cluster_0_degs_html += "</tr>";
+                    }
 
                     //fill table with DEGs for first cluster
-                    $('#tbl-cluster-degs tbody').html(cluster_1_degs_html);
+                    $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
@@ -180,7 +202,7 @@ $(document).ready(function() {
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
                     //fill table with DEGs for cluster 0
-                    $('#tbl-cluster-degs tbody').html(cluster_1_degs_html);
+                    $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
                     $('#tbl-cluster-degs').removeClass("d-none");
 
                     //hide spinner
@@ -216,16 +238,29 @@ $(document).ready(function() {
                     let data = response;
                     //console.log(data);
 
-                    let cluster_degs_html = data["cluster_degs_html"] //dict: clusterNum  -> HTML tbody content
+                    let clusterDEGAsList = data["cluster_degs_as_list"]; //dict: clusterNum  -> HTML tbody content
+                    selectedClusterDEGAsList = clusterDEGAsList;
 
-                    //fill table with DEGs for cluster 0
+                    let clusterDEGAsStr = data["cluster_degs_as_str"];
+                    selectedClusterDEGListAsStr = clusterDEGAsStr;
+
+                    //fill table with DEGs for cluster
+                    var cluster_degs_html = "";
+                    let deg_file_rows = clusterDEGAsStr.split("\n");
+                    for(var i = 0; i < deg_file_rows.length; i++) {
+                        cluster_degs_html += "<tr class='text-center'>"
+                        let tds = deg_file_rows[i].split(",");
+                        for(var j = 0; j < tds.length; j++) {
+                            cluster_degs_html += "<td>" + tds[j] + "</td>";
+                        }
+                        cluster_degs_html += "</tr>";
+                    }
                     $('#tbl-cluster-degs tbody').html(cluster_degs_html);
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
 
 
-                    $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
@@ -243,13 +278,116 @@ $(document).ready(function() {
 
    });
 
+    function loadSavedDEGLists() {
+        json_url = `/json_lst_saved_deg_lists/${runID}`;
+        $.get(json_url, function(response) {
+        })
+            .done(function(response) {
+                if (response) {
+
+                    let data = response;
+                    //console.log(data);
+
+                    let savedDEGLists = data["saved_deg_lists"]
+
+                    //empty ddl-saved-deg-lists as intermediate step
+                    $('.saved-deg-lists-item').remove();
+
+                    //1-get template HTML, 2- replace placeholder, 3- add to all over HTML
+                    var html = "";
+
+                    for (var i=0; i < savedDEGLists.length; i++) {
+                        html += "<li class='saved-deg-lists-item'>";
+                        html += $('#saved-deg-lists-item-template').html();
+                        html = html.replace("saved_deg_list_id_placeholder", savedDEGLists[i]);
+                        html += "</li>";
+                    }
+
+                    //console.log(html);
+
+                    $('#saved-deg-lists-intersect').before(html);
+
+                }
+            })
+            .fail(function() {
+                alert( "Error. Please try again later." );
+            })
+    }
+
     //save current DEG list as a SAVED DEG LIST
     $('#lnk-save-as-deg-list').click(function () {
-        var saveAsDEGListModal = new bootstrap.Modal(document.getElementById('modal-save-as-deg-list'), {
+        $('#txt-modal-save-deg-list-id').val("deg_lst_" + expTitle + "_cluster_" + selectedCluster);
+        saveAsDEGListModal = new bootstrap.Modal(document.getElementById('modal-save-as-deg-list'), {
             keyboard: false
-        })
+        });
         saveAsDEGListModal.toggle();
+
     });
+
+    //bind click event to submit button
+    $('#modal-save-as-deg-list-submit').click(function () {
+
+        let degListID = $('#txt-modal-save-deg-list-id').val();
+
+        console.log(degListID);
+
+        if (savedDEGLists.includes(degListID) == true) {
+            alert("There is already a saved DEG list with the same name. Please choose another name.")
+
+        } else {
+            json_url = `/save_deg_list/${runID}/${expTitle}/${selectedCluster}/${degListID}`;
+
+            $.get(json_url, function (response) {
+            })
+                .done(function (response) {
+                    if (response) {
+
+                        let data = response;
+                        alert("Saved!")
+                        savedDEGLists.push(degListID);
+                        loadSavedDEGLists();
+
+                        saveAsDEGListModal.toggle();
+
+
+                    }
+                })
+                .fail(function () {
+                    alert("Error. Please try again later.");
+                })
+        }
+
+    });
+
+    $('.deg_list_del').click(function () {
+
+        let degListID = $(this).data("deg-list-id");
+
+        if (confirm("Are you sure you want to delete?") == False) {
+            alert("Canceled.")
+            return;
+        }
+
+        json_url = `workspace/run/${runID}/del_deg_list/${degListID}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+
+                    alert("Deleted!");
+
+                    loadSavedDEGLists();
+
+                }
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
+    });
+
 
     //intersect DEG list from current cluster with one or more SAVED DEG LIST(S)
     $('#lnk-intersect-with').click(function () {
@@ -258,4 +396,11 @@ $(document).ready(function() {
         })
         intersectClusterWithListModal.toggle();
     });
+
+
+    //bind on document ready
+
+    //fill Saved DEG Lists ddl with content
+    loadSavedDEGLists();
+
 });
