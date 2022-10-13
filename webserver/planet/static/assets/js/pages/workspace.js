@@ -310,7 +310,7 @@ $(document).ready(function() {
 
                     //console.log(html);
 
-                    $('#saved-deg-lists-intersect').before(html);
+                    $('#create-deg-list-manually-wrapper').before(html);
 
                 }
             })

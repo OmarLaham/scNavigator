@@ -203,11 +203,13 @@
                       <div class="accordion-item">
                         <h2 class="accordion-header bg-gray-300 text-primary" id="panelsStayOpen-headingOne">
                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-                            Cross clusters with Gene Marker DB
+                            Cross Clusters with Gene Marker DB
                           </button>
                         </h2>
                         <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                           <div class="accordion-body">
+                            <strong>Important:</strong> Make sure you run "<strong>Find DEGs for Different Clusters</strong>" below before you run this step.
+                            <br />
                             <div id="accordion-cross-with-marker-db-controls">
                               <div id="ddl-cross-with-marker-db" class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -251,7 +253,7 @@
                       <div class="accordion-item">
                         <h2 class="accordion-header bg-gray-300 text-primary" id="panelsStayOpen-headingOne">
                           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-                            Cross clusters with Saved DEG Lists
+                            Cross Clusters With a Saved DEG List
                           </button>
                         </h2>
                         <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
@@ -402,14 +404,14 @@
                       <span class="font-weight-bold ms-1"><span id="selected-cluster"></span> DEGs</span>
                     </p>
                   </div>
-                  <div class="col-3">
-                    <a id="lnk-save-as-deg-list" href="javascript:;"><i class="fas fa-plus-square text-info" aria-hidden="true"></i> Add to<br />saved DEGs lists</a>
+{#                  <div class="col-3">#}
+{#                    <a id="lnk-intersect-with" href="javascript:;"><i class="fas fa-tasks text-info" aria-hidden="true"></i> Intersect with<br />saved DEG list(s)</a>#}
+{#                  </div>#}
+                  <div class="col-3 text-center">
+                    <a id="lnk-save-as-deg-list" href="javascript:;"><i class="fas fa-plus-square text-info" aria-hidden="true"></i> Add to saved DEGs lists</a>
                   </div>
-                  <div class="col-3">
-                    <a id="lnk-intersect-with" href="javascript:;"><i class="fas fa-tasks text-info" aria-hidden="true"></i> Intersect with<br />saved DEG list(s)</a>
-                  </div>
-                  <div class="col-3">
-                    <a id="lnk-cluster-exp" href="javascript:;"><i class="fas fa-microscope text-info" aria-hidden="true"></i> Start experiment<br />from this cluster</a>
+                  <div class="col-6 text-center">
+                    <a id="lnk-cluster-exp" href="javascript:;"><i class="fas fa-microscope text-info" aria-hidden="true"></i> Start experiment from this cluster</a>
                   </div>
                 </div>
 
