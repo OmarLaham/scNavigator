@@ -41,8 +41,8 @@ urlpatterns = [
     path("del_saved_deg_list/<str:run_id>/<str:deg_list_id>", views.del_saved_deg_list, name="del_saved_deg_list"),
     path("saved_deg_list/<str:run_id>/<str:deg_list_id>", views.saved_deg_list, name="saved_deg_list"),
     path("create_deg_list_manually/<str:run_id>/<str:deg_list_id>/<str:genes>", views.create_deg_list_manually, name="create_deg_list_manually"),
-    #this view can be used for specific or all clusters if <str:clusters> == "all"
-    path("cross_with_saved_deg_lists/<str:run_id>/<str:exp_title>/<str:clusters>/<str:saved_deg_lists>", views.cross_with_saved_deg_lists, name="cross_with_saved_deg_lists"),
+    # #this view can be used for specific or all clusters if <str:clusters> == "all"
+    # path("cross_with_saved_deg_lists/<str:run_id>/<str:exp_title>/<str:clusters>/<str:saved_deg_lists>", views.cross_with_saved_deg_lists, name="cross_with_saved_deg_lists"),
 
 
     #running experiments
@@ -59,7 +59,9 @@ urlpatterns = [
     path("run_r_script/subset_cluster/<str:run_id>/<str:upload_name>/<str:exp_title>/<str:cluster>/<int:min_nfeature_rna>/<int:max_nfeature_rna>/<int:percent_mt>/<int:n_dims>/<str:clustering_res>", views.run_r_script_subset_cluster, name="r-subset-cluster"),
 
     #here you can pass a full saved degs list or any list of genes
-    path("json_find_gene_intersection/<str:run_id>/<str:exp_id>/<str:cluster_id>/<str:genes_list>", views.workspace, name="find_gene_intersection")
+    path("json_find_cluster_to_list_gene_intersection/<str:run_id>/<str:exp_title>/<str:cluster>/<str:saved_deg_list_id>", views.json_find_cluster_to_list_gene_intersection, name="json_find_cluster_to_list_gene_intersection"),
+    path("json_find_exp_to_list_gene_intersection/<str:run_id>/<str:exp_title>/<str:saved_deg_list_id>", views.json_find_exp_to_list_gene_intersection, name="json_find_exp_to_list_gene_intersection"),
+    path("json_find_cluster_to_db_gene_intersection/<str:run_id>/<str:exp_title>/<str:db_species>/<str:db_phase>", views.json_find_cluster_to_db_gene_intersection, name="json_find_cluster_to_db_gene_intersection"),
 
     # UI Kits Html files
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # server files from media

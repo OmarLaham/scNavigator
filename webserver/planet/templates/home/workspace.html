@@ -208,23 +208,38 @@
                         </h2>
                         <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                           <div class="accordion-body">
-                            <div id="accordion-run-exp-controls">
-                              <!-- controls go here -->
+                            <div id="accordion-cross-with-marker-db-controls">
+                              <div id="ddl-cross-with-marker-db" class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Please Select DB
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item" href="javascript:;" data-species="hs" data-phase="fetal">Human Fetal DB</a></li>
+                                  <li><a class="dropdown-item" href="javascript:;" data-species="hs" data-phase="adult">Human Adult DB</a></li>
+                                  <li><a class="dropdown-item" href="javascript:;" data-species="mm" data-phase="adult">Mouse Adult DB</a></li>
+                                  <li><a class="dropdown-item" href="javascript:;" data-species="mm" data-phase="fetal">Mouse Fetal DB</a></li>
+                                </ul>
+                              </div>
                             </div>
                             <br />
-                            <button id="btn-accordion-run-exp-run" class="btn btn-small btn-primary">Run</button>
+                            <button id="btn-accordion-cross-with-marker-db-run" class="btn btn-small btn-primary">Run</button>
                             <div id="accordion-run-exp-spinner" class="text-center d-none">
                               <div class="spinner-border text-secondary" role="status">
                                 <span class="sr-only">Loading...</span>
                               </div>
                             </div>
-                            <div id="accordion-run-exp-container" class="d-none text-center">
-                              <strong>UMAP:</strong><br />
-                              <img id="img-run-exp-umap" src="" width="60%" /><br />
-                              <strong>Processed Data:</strong><br />
-                              data.rds ( <a id="lnk-run-exp-data-rds" href="" target="_self"><i class="fas fa-download"></i> Download</a> )
-                              <br />
-                              Note: Match cell type is stored in data@meta.data$cellType
+                            <div id="accordion-cross-with-marker-db-container" class="d-none text-center">
+                              <table>
+                                <thead>
+                                  <tr class="text-center">
+                                  <th>Cluster</th>
+                                  <th>Matches</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                              </table>
                             </div>
                           </div>
                         </div>

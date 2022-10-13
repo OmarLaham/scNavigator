@@ -154,6 +154,7 @@ MEDIA_ROOT = str(APPS_DIR / "media")
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
 
+MEDIA_DIR = path.join(APPS_DIR, "media")
 RUNS_DIR = path.join(APPS_DIR, "media", "runs")
 SCRIPTS_DIR = path.join(APPS_DIR, "scripts")
 # TEMPLATES

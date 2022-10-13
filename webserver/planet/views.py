@@ -168,28 +168,112 @@ def create_deg_list_manually(request, run_id, deg_list_id, genes):
 
 
 
-def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_lists):
+# def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_lists):
+#
+#     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+#     clusters_dea_paths = []
+#
+#     saved_deg_lists = saved_deg_lists.split(",")
+#
+#     if clusters == "all":
+#         clusters_dea_paths = list(sorted(os.listdir(dea_path)))
+#         #fill with all available clusters from this experiment
+#         clusters = pd.read_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "clusters.csv"))["levels(data)"].values.tolist()
+#     else:
+#         clusters = clusters.split(",")
+#         for cluster in clusters:
+#             clusters_dea_paths.append(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+#
+#     intersection_result = dict()
+#
+#     for cluster in clusters:
+#
+#         #intersection results for single cluster vs different saved deg lists
+#         cluster_results = dict()
+#
+#         df_cluster_dea = pd.read_csv(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+#         # get columns ready for intersection
+#         colnames = list(df_cluster_dea.columns)
+#         colnames[0] = "gene"
+#         df_cluster_dea.columns = colnames
+#         df_cluster_dea = df_cluster_dea[df_cluster_dea["p_val"] <= default_pval_thresh]
+#
+#         for saved_deg_list in saved_deg_lists:
+#             saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(saved_deg_list))
+#             df_saved_deg_list = pd.read_csv(saved_deg_list_path)
+#
+#             #get columns ready for intersection
+#             colnames = list(df_saved_deg_list.columns)
+#             colnames[0] = "gene"
+#             df_saved_deg_list.columns = colnames
+#             df_saved_deg_list = df_saved_deg_list[df_saved_deg_list["p_val"] <= default_pval_thresh]
+#
+#             #let's do intersection ;)
+#
+#             cluster_genes = df_cluster_dea["gene"].values.tolist()
+#             saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
+#
+#             gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
+#             cluster_results[saved_deg_list] = gene_intersection
+#
+#         intersection_result[cluster] = cluster_results
+#
+#     context = {
+#         "intersection_result": intersection_result
+#     }
+#
+#     return JsonResponse(context)
+
+def json_find_cluster_to_list_gene_intersection(request, run_id, exp_title, cluster, saved_deg_list_id):
+    dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+    cluster_dea_path = path.join(dea_path, "cluster_{0}_dea.csv".format(cluster))
+
+    df_cluster_dea = pd.read_csv(cluster_dea_path)
+    # get columns ready for intersection
+    colnames = list(df_cluster_dea.columns)
+    colnames[0] = "gene"
+    df_cluster_dea.columns = colnames
+    df_cluster_dea = df_cluster_dea[df_cluster_dea["p_val"] <= default_pval_thresh]
+
+    saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists",
+                                    "{0}.csv".format(saved_deg_list_id))
+
+    df_saved_deg_list = pd.read_csv(saved_deg_list_path)
+
+    # get columns ready for intersection
+    colnames = list(df_saved_deg_list.columns)
+    colnames[0] = "gene"
+    df_saved_deg_list.columns = colnames
+    df_saved_deg_list = df_saved_deg_list[(df_saved_deg_list["p_val"] <= default_pval_thresh) | (pd.isna(df_saved_deg_list["p_val"]))] #NA is important for manually saved deg lists
+
+    # let's do intersection ;)
+
+    cluster_genes = df_cluster_dea["gene"].values.tolist()
+    saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
+
+    gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
+
+    context = {
+        "intersection": gene_intersection
+    }
+
+    return JsonResponse(context)
+
+def json_find_exp_to_list_gene_intersection(request, run_id, exp_title, saved_deg_list_id):
 
     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
-    clusters_dea_paths = []
+    clusters_dea_paths = list(sorted(os.listdir(dea_path)))
 
-    saved_deg_lists = saved_deg_lists.split(",")
 
-    if clusters == "all":
-        clusters_dea_paths = list(sorted(os.listdir(dea_path)))
-        #fill with all available clusters from this experiment
-        clusters = pd.read_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "clusters.csv"))["levels(data)"].values.tolist()
-    else:
-        clusters = clusters.split(",")
-        for cluster in clusters:
-            clusters_dea_paths.append(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+
+    print("##################", clusters_dea_paths)
+
+    # don't forget to remove clusters.csv ;)
+    clusters = [cluster_dea_path.split("_dea.csv")[0].split("cluster_")[1] for cluster_dea_path in clusters_dea_paths if cluster_dea_path != "clusters.csv"]
 
     intersection_result = dict()
 
     for cluster in clusters:
-
-        #intersection results for single cluster vs different saved deg lists
-        cluster_results = dict()
 
         df_cluster_dea = pd.read_csv(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
         # get columns ready for intersection
@@ -198,25 +282,24 @@ def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_l
         df_cluster_dea.columns = colnames
         df_cluster_dea = df_cluster_dea[df_cluster_dea["p_val"] <= default_pval_thresh]
 
-        for saved_deg_list in saved_deg_lists:
-            saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(saved_deg_list))
-            df_saved_deg_list = pd.read_csv(saved_deg_list_path)
+        saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists",
+                                        "{0}.csv".format(saved_deg_list_id))
+        df_saved_deg_list = pd.read_csv(saved_deg_list_path)
 
-            #get columns ready for intersection
-            colnames = list(df_saved_deg_list.columns)
-            colnames[0] = "gene"
-            df_saved_deg_list.columns = colnames
-            df_saved_deg_list = df_saved_deg_list[df_saved_deg_list["p_val"] <= default_pval_thresh]
+        # get columns ready for intersection
+        colnames = list(df_saved_deg_list.columns)
+        colnames[0] = "gene"
+        df_saved_deg_list.columns = colnames
+        df_saved_deg_list = df_saved_deg_list[(df_saved_deg_list["p_val"] <= default_pval_thresh) | (pd.isna(df_saved_deg_list["p_val"]))] #NA is important for manually saved deg lists
 
-            #let's do intersection ;)
+        # let's do intersection ;)
 
-            cluster_genes = df_cluster_dea["gene"].values.tolist()
-            saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
+        cluster_genes = df_cluster_dea["gene"].values.tolist()
+        saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
 
-            gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
-            cluster_results[saved_deg_list] = gene_intersection
+        gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
 
-        intersection_result[cluster] = cluster_results
+        intersection_result[cluster] = gene_intersection
 
     context = {
         "intersection_result": intersection_result
@@ -224,6 +307,95 @@ def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_l
 
     return JsonResponse(context)
 
+def json_find_cluster_to_db_gene_intersection(request, run_id, exp_title, db_species, db_phase):
+
+    dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+    clusters_dea_paths = list(sorted(os.listdir(dea_path)))
+
+    # don't forget to remove clusters.csv ;)
+    clusters = [cluster_dea_path.split("_dea.csv")[0].split("cluster_")[1] for cluster_dea_path in clusters_dea_paths if
+                cluster_dea_path != "clusters.csv"]
+
+    df_db = pd.read_csv(path.join(settings.MEDIA_DIR, "marker_dbs", db_species, "{0}.csv".format(db_phase)))
+    # get columns ready for intersection
+    colnames = list(df_db.columns)
+    colnames[0] = "gene"
+    df_db.columns = colnames
+
+    intersection_result = dict()
+
+    for cluster in clusters:
+
+        df_cluster_dea = pd.read_csv(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
+        # get columns ready for intersection
+        colnames = list(df_cluster_dea.columns)
+        colnames[0] = "gene"
+        df_cluster_dea.columns = colnames
+        df_cluster_dea = df_cluster_dea[(df_cluster_dea["p_val"] <= default_pval_thresh) | pd.isna(df_cluster_dea["p_val"])] #NA is important for manually saved deg lists
+        dea_cluster_genes = df_cluster_dea["gene"].values.tolist()
+
+        dea_clusters = clusters # better code readability
+        db_clusters = list(sorted(df_db["cluster"].value_counts().keys()))
+
+        #store values to build df_intersections for this cluster
+        intersections = []
+
+        # my invention :P -> calc summation of pval and pval_adj to sort final result better (when we have many clusters with same n Genes) ;) You care only about sorting them then, not about any threshold.
+        statistcs = []
+
+        for db_cluster in db_clusters:
+            df_db_cluster = df_db[df_db["cluster"] == db_cluster]
+            db_cluster_genes = df_db_cluster["gene"].values.tolist()
+
+            # sum p_val, p_val_adj (for better sorting later when we have many clusters with same nGenes)
+            sum_p_val = df_db_cluster["p_val"].sum()
+            sum_p_val_adj = df_db_cluster["p_val_adj"].sum()
+
+            statistcs.append([db_cluster, sum_p_val, sum_p_val_adj])
+
+            gene_intersection = list(set([gene for gene in dea_cluster_genes if gene in db_cluster_genes]))
+
+            if len(gene_intersection) == 0:
+                continue
+            else:
+                intersections.append([db_cluster, len(gene_intersection), ",".join(gene_intersection)])
+
+        df_intersection = pd.DataFrame(intersections, columns=["cluster", "n_genes", "genes"])
+        df_statistics = pd.DataFrame(statistcs, columns=["cluster", "sum_p_val", "sum_p_val_adj"])
+
+        # group by cluster using max so we don't have multiple entries of same cluster
+        df_intersection = df_intersection.groupby("cluster").max().reset_index()
+        df_intersection.sort_values(by=["n_genes"], ascending=False, inplace=True)
+
+        #e.g.: we have rows with nGenes: 3,3,3,2,1. This will return 3,2 and then we will return in the result every entry with 3 and 2 nGenes sorted by p_val_adj then p_val
+        n_genes_to_select = list(sorted(df_intersection["n_genes"].values.tolist(), reverse=True))[:2]
+
+        df_intersection = df_intersection[df_intersection["n_genes"].isin(n_genes_to_select)]
+        df_intersection.reset_index(inplace=True)
+        del df_intersection["index"]
+
+        # add sum_p_val and sum_p_val_adj to sort results ;)
+        df_intersection["sum_p_val"] = ""
+        df_intersection["sum_p_val_adj"] = ""
+        # fill with value from db_statistics
+        for index, row in df_intersection.iterrows():
+            inter_cluster = row["cluster"]
+            df_intersection["sum_p_val"][index] = df_statistics[df_statistics["cluster"] == inter_cluster].iloc[0][
+                "sum_p_val"]
+            df_intersection["sum_p_val_adj"][index] = df_statistics[df_statistics["cluster"] == inter_cluster].iloc[0][
+                "sum_p_val_adj"]
+
+        df_intersection.sort_values(by=["n_genes", "sum_p_val_adj", "sum_p_val"], inplace=True,
+                                    ascending=[False, True, True])
+
+        cluster_intersection_result = df_intersection[["cluster", "n_genes", "genes"]].values.tolist()
+        intersection_result[cluster] = cluster_intersection_result
+
+    context = {
+        "intersection_result": intersection_result
+    }
+
+    return JsonResponse(context)
 
 def workspace(request, run_id):
 

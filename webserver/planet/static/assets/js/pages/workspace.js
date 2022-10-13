@@ -7,10 +7,13 @@ var selectedCluster = "0" //TODO: change to undefined;
 var selectedClusterDEGAsList = undefined;
 var selectedClusterDEGListAsStr = undefined;
 
+var selectedDBPhase = undefined;
+var selectedDBSpecies = undefined;
+
 var savedDEGLists = [];
 
-var saveAsDEGListModal = undefined;
 var createDEGListManuallyModal = undefined;
+var saveAsDEGListModal = undefined;
 
 $(document).ready(function() {
 
@@ -492,6 +495,41 @@ $(document).ready(function() {
             })
 
     });
+
+    $('#ddl-cross-with-marker-db li a').click(function() {
+        selectedDBSpecies = $(this).data("species");
+        selectedDBPhase = $(this).data("phase");
+        alert("DB selected successfully.");
+    })
+
+    $('#btn-accordion-cross-with-marker-db-run').click(function() {
+
+        if(selectedDBSpecies === undefined || selectedDBPhase === undefined) {
+            alert("Please select DB first.")
+            return;
+        }
+
+        json_url = `/json_find_cluster_to_db_gene_intersection/${runID}/${selectedCluster}/${selectedDBSpecies}/${selectedDBPhase}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+                    //console.log(data)
+
+                    const tbl_html = data["tbl_intersection"]
+                    $('#accordion-cross-with-marker-db-container tbody').html(tbl_html);
+                }
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
+
+
+    });
+
 
 
     //bind on document ready
