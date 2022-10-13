@@ -11,6 +11,7 @@ var selectedDBPhase = undefined;
 var selectedDBSpecies = undefined;
 
 var savedDEGLists = [];
+var selectedSavedDEGList = undefined;
 
 var createDEGListManuallyModal = undefined;
 var saveAsDEGListModal = undefined;
@@ -293,6 +294,7 @@ $(document).ready(function() {
 
                     let savedDEGLists = data["saved_deg_lists"]
 
+                    // A- do it for ddl-navigation
                     //empty ddl-saved-deg-lists as intermediate step
                     $('.saved-deg-lists-item').remove();
 
@@ -308,9 +310,15 @@ $(document).ready(function() {
                         html += "</li>";
                     }
 
-                    //console.log(html);
-
                     $('#create-deg-list-manually-wrapper').before(html);
+
+                    // B- do it for ddl-cross-with-deg-list inside accordion
+                    var html = "";
+                    for (var i=0; i < savedDEGLists.length; i++) {
+                        html += `<li><a class="dropdown-item" href="javascript:;" data-list-id="${savedDEGLists[i]}">${savedDEGLists[i]}</a></li>`;
+                    }
+                    $("#ddl-cross-with-deg-list .dropdown-menu").html(html);
+
 
                 }
             })
@@ -521,6 +529,53 @@ $(document).ready(function() {
 
                     const tbl_html = data["tbl_intersection"]
                     $('#accordion-cross-with-marker-db-container tbody').html(tbl_html);
+                }
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
+
+
+    });
+
+    $(document).on("click", "#ddl-cross-with-deg-list .dropdown-menu li a", function() {
+        selectedSavedDEGList =  $(this).data("list-id");
+        alert("Selected successfully!");
+    });
+
+    $('#btn-accordion-cross-with-saved-deg-list-run').click(function() {
+
+        if(selectedSavedDEGList === undefined) {
+            alert("You have to select a DEG list from the list above.")
+            return;
+        }
+
+        json_url = `/json_find_exp_to_list_gene_intersection/${runID}/${expTitle}/${selectedSavedDEGList}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+                    console.log(data)
+
+                    const dict_intersection_result = data["dict_intersection_result"];
+
+                    //TODO: make available for download
+                    var html = "";
+                    for (const [key, value] of Object.entries(dict_intersection_result)) {
+                        let cluster = key;
+                        let genes = value;
+                        let nGenes = genes.length;
+
+                        html += "<tr>";
+                        html += `<td>${cluster}</td>`;
+                        html += `<td>${nGenes}</td>`;
+                        html += `<td style="white-space: pre-wrap">${genes.join(", ")}</td>`;
+                        html += "</tr>";
+                    }
+                    $('#accordion-cross-deg-lists-container tbody').html(html);
                 }
             })
             .fail(function () {

@@ -25,6 +25,8 @@ import json
 import gzip
 from glob import glob, escape
 
+from natsort import natsorted #bette sorting for strings starting with numbers
+
 import shutil
 
 import os
@@ -262,16 +264,12 @@ def json_find_cluster_to_list_gene_intersection(request, run_id, exp_title, clus
 def json_find_exp_to_list_gene_intersection(request, run_id, exp_title, saved_deg_list_id):
 
     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
-    clusters_dea_paths = list(sorted(os.listdir(dea_path)))
-
-
-
-    print("##################", clusters_dea_paths)
+    clusters_dea_paths = list(natsorted(os.listdir(dea_path)))
 
     # don't forget to remove clusters.csv ;)
     clusters = [cluster_dea_path.split("_dea.csv")[0].split("cluster_")[1] for cluster_dea_path in clusters_dea_paths if cluster_dea_path != "clusters.csv"]
 
-    intersection_result = dict()
+    dict_intersection_result = dict()
 
     for cluster in clusters:
 
@@ -299,10 +297,10 @@ def json_find_exp_to_list_gene_intersection(request, run_id, exp_title, saved_de
 
         gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
 
-        intersection_result[cluster] = gene_intersection
+        dict_intersection_result[cluster] = gene_intersection
 
     context = {
-        "intersection_result": intersection_result
+        "dict_intersection_result": dict_intersection_result
     }
 
     return JsonResponse(context)
