@@ -517,7 +517,7 @@ $(document).ready(function() {
             return;
         }
 
-        json_url = `/json_find_cluster_to_db_gene_intersection/${runID}/${selectedCluster}/${selectedDBSpecies}/${selectedDBPhase}`;
+        json_url = `/json_find_cluster_to_db_gene_intersection/${runID}/${expTitle}/${selectedDBSpecies}/${selectedDBPhase}`;
 
         $.get(json_url, function (response) {
         })
@@ -525,10 +525,41 @@ $(document).ready(function() {
                 if (response) {
 
                     let data = response;
-                    //console.log(data)
+                    console.log(data)
 
-                    const tbl_html = data["tbl_intersection"]
-                    $('#accordion-cross-with-marker-db-container tbody').html(tbl_html);
+                    const dict_intersection_result = data["dict_intersection_result"];
+
+                    //explanation for data format:
+                    // dict_intersection_result = {
+                    //     "cluster_number" -> [
+                    //         ["telencephalon", 4, "Ftl1,Abracl,Sepw1,Fth1"],
+                    //         ["immune_cells", 4, "Tsc22d1,Ftl1,Sepw1,Fth1"],
+                    //         ["endothelial_cells", 4, "Ftl1,Sh3bgrl,Hmgn2,Fth1"]
+                    //     ]
+                    // }
+
+                    //TODO: make available for download
+                    var html = "";
+                    for (const [key, value] of Object.entries(dict_intersection_result)) {
+                        let cluster = key;
+                        let db_intersections = value;
+                        for(var i = 0; i < db_intersections.length; i++) {
+                            const row = db_intersections[i];
+                            const db_cluster = row[0];
+                            const nGenes = row[1];
+                            const genes = row[2].replaceAll(",", ", ");
+
+                            html += "<tr>";
+                            if (i == 0) { //add only on first occurence and use row span
+                                html += `<td rowspan="${db_intersections.length}">${cluster}</td>`;
+                            }
+                            html += `<td>${db_cluster}</td>`;
+                            html += `<td>${nGenes}</td>`;
+                            html += `<td style="white-space: pre-wrap">${genes}</td>`; //we need white spaces to wrap long lists of gene names
+                            html += "</tr>";
+                        }
+                    }
+                    $('#accordion-cross-with-marker-db-container tbody').html(html);
                 }
             })
             .fail(function () {

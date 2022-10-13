@@ -315,12 +315,13 @@ def json_find_cluster_to_db_gene_intersection(request, run_id, exp_title, db_spe
                 cluster_dea_path != "clusters.csv"]
 
     df_db = pd.read_csv(path.join(settings.MEDIA_DIR, "marker_dbs", db_species, "{0}.csv".format(db_phase)))
+    df_db = df_db[df_db["p_val"] <= default_pval_thresh] #this is very important to make comparison and intersection fare ;)
     # get columns ready for intersection
     colnames = list(df_db.columns)
     colnames[0] = "gene"
     df_db.columns = colnames
 
-    intersection_result = dict()
+    dict_intersection_result = dict()
 
     for cluster in clusters:
 
@@ -387,10 +388,10 @@ def json_find_cluster_to_db_gene_intersection(request, run_id, exp_title, db_spe
                                     ascending=[False, True, True])
 
         cluster_intersection_result = df_intersection[["cluster", "n_genes", "genes"]].values.tolist()
-        intersection_result[cluster] = cluster_intersection_result
+        dict_intersection_result[cluster] = cluster_intersection_result
 
     context = {
-        "intersection_result": intersection_result
+        "dict_intersection_result": dict_intersection_result
     }
 
     return JsonResponse(context)
