@@ -446,6 +446,12 @@ def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfe
          path.join(settings.SCRIPTS_DIR, "run_experiment.R"),
          run_id, str(exp_title), upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
 
+    # create df_exp_parameters to save exp parameters so we can load them any time the user loads an experiment later
+    # BE CAREFUL: here we use data.rds (run_experiment result), not the original upload_name
+    df_exp_parameters = pd.DataFrame([run_id, str(exp_title), "data.rds", str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)],
+             columns = ["run_id", "exp_title", "upload_name", "min_nfeature_rna", "max_nfeature_rna", "percent_mt", "n_dims", "clustering_res"])
+    df_exp_parameters.to_csv(path.join(settings.RUNS_DIR, run_id, "data", exp_title, "exp_parameters.csv"))
+
     context = {
 
         "umap_img_src": "http://localhost:8000/media/" +
@@ -556,6 +562,32 @@ def run_r_script_subset_cluster(request, run_id, upload_name, exp_title, cluster
 
 
     return JsonResponse({})
+
+def json_load_exp(request, run_id, exp_title):
+
+    df_exp_params_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "exp_parameters.csv")
+    if not path.exists(df_exp_params_path):
+        raise Exception("Internal Error: Can't find", df_exp_params_path)
+
+    df_exp_params = pd.read_csv(df_exp_params_path)
+    row = df_exp_params.loc[0]
+
+    dict_exp_params = {
+        "run_id": str(row["run_id"]),
+        "exp_title": str(row["exp_title"]),
+        "upload_name": row["upload_name"],
+        "min_nfeature_rna": str(row["min_nfeature_rna"]),
+        "max_nfeature_rna": str(row["max_nfeature_rna"]),
+        "percent_mt": str(row["percent_mt"]),
+        "n_dims": str(row["n_dims"]),
+        "clustering_res": str(row["clustering_res"])
+    }
+
+    context = {
+        "dict_exp_parameters": dict_exp_params
+    }
+
+    return JsonResponse(context)
 
 def downloads(request):
 

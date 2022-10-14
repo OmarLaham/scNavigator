@@ -1,6 +1,14 @@
 //tmp
 const runID = 1;
+
 var uploadName = "GSM3860733_E10";
+
+const dataMode = {
+  rawUpload: 'rawUpload',
+  experiment: 'experiment'
+};
+var usedDataMode = dataMode.rawUpload;
+
 const nDims = 50;
 var expTitle = "P14_Prime"; //TODO: change to undefined
 var selectedCluster = "0" //TODO: change to undefined;
@@ -15,6 +23,8 @@ var selectedSavedDEGList = undefined;
 
 var createDEGListManuallyModal = undefined;
 var saveAsDEGListModal = undefined;
+
+
 
 $(document).ready(function() {
 
@@ -138,6 +148,17 @@ $(document).ready(function() {
                     $('#accordion-run-exp-container').hide();
                     $('#accordion-run-exp-container').removeClass('d-none')
                     $('#accordion-run-exp-container').fadeIn();
+
+                    //add experiment to sidebar!
+                    var sidebar_exp_html = $('#sidebar-exp-template').html().replaceAll("exp_title_place_holder", expTitle);
+                    //append
+                    $('#sidebar-experiments').append(sidebar_exp_html);
+                    //fade effect
+                    var sidebar_experiment_new = $('sidebar-experiemnt-new');
+                    sidebar_experiment_new.hide();
+                    sidebar_experiment_new.removeClass('d-none');
+                    sidebar_experiment_new.fadeIn();
+                    sidebar_experiment_new.removeClass();
 
 
                 }
@@ -462,6 +483,14 @@ $(document).ready(function() {
         alert("Loaded " + data_folder_name);
 
         uploadName = data_folder_name
+        usedDataMode = dataMode.rawUpload;
+
+        $('#txt-min-nfeature-rna').val("");
+        $('#txt-max-nfeature-rna').val("");
+        $('#txt-percent-mt').val("");
+        $('#txt-run-exp-n-dims').val("");
+        $('#txt-run-exp-title').val("");
+        $('#txt-run-exp-clustering-res').val("");
 
         $('#loaded-data').html(uploadName);
     });
@@ -616,7 +645,55 @@ $(document).ready(function() {
 
     });
 
+    // this should have been implemented in a "sidebar.js" page, but I implemented here to avoid re-declaration of all vars I have here
+    $(document).on("click", ".sidebar-experiemnt-load", function() {
 
+        expTitle = $(this).data("exp-title");
+
+        json_url = `/json_load_exp/${runID}/${expTitle}`;
+
+        $.get(json_url, function (response) {
+        })
+            .done(function (response) {
+                if (response) {
+
+                    let data = response;
+                    console.log(data);
+
+                    const dict_exp_parameters = data["dict_exp_parameters"];
+
+
+                    uploadName = dict_exp_parameters["upload_name"];
+                    const minNFeatureRNA = dict_exp_parameters["min_nfeature_rna"];
+                    const maxNFeatureRNA = dict_exp_parameters["max_nfeature_rna"];
+                    const percentMT = dict_exp_parameters["percent_mt"];
+                    const nDims = dict_exp_parameters["n_dims"];
+                    const clusteringRes = dict_exp_parameters["clustering_res"];
+
+                    usedDataMode = dataMode.experiment;
+
+                    $('#txt-min-nfeature-rna').val(minNFeatureRNA);
+                    $('#txt-max-nfeature-rna').val(maxNFeatureRNA);
+                    $('#txt-percent-mt').val(percentMT);
+                    $('#txt-run-exp-n-dims').val(nDims);
+                    $('#txt-run-exp-title').val(expTitle);
+                    $('#txt-run-exp-clustering-res').val(clusteringRes);
+
+                }
+
+                $('#loaded-data').html(expTitle + " (Experiment)");
+
+                loadSavedDEGLists();
+
+                alert("Loaded experiment. Fields are now filled with the values that have been used to create the selected experiment.");
+            })
+            .fail(function () {
+                alert("Error. Please try again later.");
+            })
+
+
+
+    });
 
     //bind on document ready
 

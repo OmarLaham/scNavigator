@@ -63,6 +63,9 @@ urlpatterns = [
     path("json_find_exp_to_list_gene_intersection/<str:run_id>/<str:exp_title>/<str:saved_deg_list_id>", views.json_find_exp_to_list_gene_intersection, name="json_find_exp_to_list_gene_intersection"),
     path("json_find_cluster_to_db_gene_intersection/<str:run_id>/<str:exp_title>/<str:db_species>/<str:db_phase>", views.json_find_cluster_to_db_gene_intersection, name="json_find_cluster_to_db_gene_intersection"),
 
+    #fetch current run experiments names as a list
+    path("json_load_exp/<str:run_id>/<str:exp_title>", views.json_load_exp, name="json_load_exp")
+
     # UI Kits Html files
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # server files from media
 

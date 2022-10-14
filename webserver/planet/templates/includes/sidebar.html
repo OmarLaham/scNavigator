@@ -9,18 +9,35 @@
     <hr class="horizontal dark mt-0">
 
   {% if "workspace" in request.get_full_path %}
-    <div class="text-center">
+    <div id="sidebar-experiments" class="text-center">
       <h6 class="text-center">Your Experiments</h6>
-      <div>
-        <div style="width: 160px; height: 80px; border-radius: 5%; border: 2px dashed #bbbbbb; margin-bottom: 5px;margin-left: auto;margin-right: auto"></div>
-        Exp1
+
+      <!-- hidden to be used as a template to create new instances -->
+      <div id="sidebar-exp-template" class="d-none">
+        <div class="sidebar-experiemnt-wrapper sidebar-experiemnt-new text-center d-none">
+          <a class="sidebar-experiemnt-load" data-exp-title="exp_title_place_holder" href="javascript:;">
+            <div class="sidebar-experiemnt text-center pt-3 h3">
+              <span><i class="fas fa-microscope"></i></span>
+            </div>
+            exp_title_place_holder
+            <hr class="horizontal dark mt-0">
+          </a>
+        </div>
       </div>
-      <hr class="horizontal dark mt-0">
-      <div>
-        <div style="width: 160px; height: 80px; border-radius: 5%; border: 2px dashed #bbbbbb; margin-bottom: 5px;margin-left: auto;margin-right: auto"></div>
-        Exp2
-      </div>
-      <hr class="horizontal dark mt-0">
+      <!-- / end of template -->
+
+      {% for exp in lst_experiments %}  {% comment %} app_name/processor.py {% endcomment %}
+        <div class="sidebar-experiemnt-wrapper text-center">
+          <a class="sidebar-experiemnt-load" data-exp-title="{{ exp }}" href="javascript:;">
+            <div class="sidebar-experiemnt text-center pt-3 h3">
+              <span><i class="fas fa-microscope"></i></span>
+            </div>
+            {{ exp }}
+            <hr class="horizontal dark mt-0">
+          </a>
+        </div>
+      {% endfor %}
+
     </div>
   {% endif %}
 </aside>
