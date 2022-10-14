@@ -173,8 +173,6 @@ $(document).ready(function() {
         //show spinner
         $('#find-degs-spinner').removeClass("d-none")
 
-
-
         json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
         $.get(json_url, function(response) {
         })
@@ -223,6 +221,13 @@ $(document).ready(function() {
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $("#ddl-find-clusters-degs").val(clusters[0]);
                     $("#selected-cluster").text("cluster_" + clusters[0]);
+
+                    //TODO: create real GO and KEGG analysis
+                    const go_data = undefined;
+                    createGOChart(go_data);
+                    const kegg_data = undefined;
+                    createKEGGChart(kegg_data);
+
                     $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
 
@@ -694,6 +699,159 @@ $(document).ready(function() {
 
 
     });
+
+    function createGOChart(data, containerID='chart-go') {
+        // Age categories
+        var categories = [
+            'term-1', 'term-2', 'term-3', 'term-4', 'term-5', 'term-6', 'term-7', 'term-8',
+            'term-9', 'term-10', 'term-11', 'term-12', 'term-13', 'term-14', 'term-15', 'term-16',
+            'term-17'
+        ];
+
+        Highcharts.chart(containerID, {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'GO Biological Processes'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: true,
+                labels: {
+                    step: 1
+                },
+            }, { // mirror axis on right side
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                },
+                accessibility: {
+                    description: 'Age (female)'
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function () {
+                        return '';
+                    }
+                },
+                accessibility: {
+                    description: 'Percentage population',
+                    rangeDescription: 'Range: 0 to 5%'
+                }
+            },
+
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', ' + this.point.category + '</b><br/>' +
+                        'log10(adj_pval): ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
+                }
+            },
+
+            series: [{
+                name: 'Enrichment',
+                color: '#F9766E',
+                data: [
+                    8.84, 7.42, 6.57, 5.68, 4.83,
+                    3.74, 2.80, 2.14, 1.79, 1.59,
+                    1.34, 1.06, 0.83, 0.63, 0.43,
+                    0.25, 0.19
+                ]
+            }]
+        });
+    }
+
+    function createKEGGChart(data, containerID='chart-kegg') {
+        // Age categories
+        var categories = [
+            'term-1', 'term-2', 'term-3', 'term-4', 'term-5', 'term-6', 'term-7', 'term-8',
+            'term-9', 'term-10', 'term-11', 'term-12', 'term-13', 'term-14', 'term-15', 'term-16',
+            'term-17'
+        ];
+
+        Highcharts.chart(containerID, {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'KEGG Database'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: true,
+                labels: {
+                    step: 1
+                },
+            }, { // mirror axis on right side
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                },
+                accessibility: {
+                    description: 'Age (female)'
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function () {
+                        return '';
+                    }
+                },
+                accessibility: {
+                    description: 'Percentage population',
+                    rangeDescription: 'Range: 0 to 5%'
+                }
+            },
+
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', ' + this.point.category + '</b><br/>' +
+                        'log10(adj_pval): ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
+                }
+            },
+
+            series: [{
+                name: 'Enrichment',
+                data: [
+                    8.84, 7.42, 6.57, 5.68, 4.83,
+                    3.74, 2.80, 2.14, 1.79, 1.59,
+                    1.34, 1.06, 0.83, 0.63, 0.43,
+                    0.25, 0.19
+                ]
+            }]
+        });
+    }
 
     //bind on document ready
 

@@ -442,45 +442,47 @@
                   <div class="col-6 text-center">
                     <a id="lnk-cluster-exp" href="javascript:;"><i class="fas fa-microscope text-info" aria-hidden="true"></i> Start experiment from this cluster</a>
                   </div>
+                  <!-- DEGs table -->
+                  <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                      <table id="tbl-cluster-degs" class="table align-items-center mb-0 d-none">
+                        <thead>
+                          <tr class="text-center">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Gene Symbol</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Avg. Log2FC</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">P-val</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Adj-p-val</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="text-center">
+                            <td>..</td>
+                            <td>..</td>
+                            <td>..</td>
+                            <td>..</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <!-- / DEGs table -->
+                  <hr />
+                  <div class="row">
+                    <div class="col col-6">
+                      <figure class="highcharts-figure">
+                          <div id="chart-go"></div>
+                      </figure>
+                    </div>
+                    <div class="col col-6">
+                      <figure class="highcharts-figure">
+                          <div id="chart-kegg"></div>
+                      </figure>
+                    </div>
+                  </div>
                 </div>
-
-
-{#                <div class="col-lg-6 col-5 my-auto text-end">#}
-{#                  <div class="dropdown float-lg-end pe-4">#}
-{#                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">#}
-{#                      <i class="fa fa-ellipsis-v text-secondary"></i>#}
-{#                    </a>#}
-{#                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">#}
-{#                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>#}
-{#                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>#}
-{#                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>#}
-{#                    </ul>#}
-{#                  </div>#}
-{#                </div>#}
               </div>
             </div>
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive">
-                <table id="tbl-cluster-degs" class="table align-items-center mb-0 d-none">
-                  <thead>
-                    <tr class="text-center">
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Gene Symbol</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Avg. Log2FC</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">P-val</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Adj-p-val</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="text-center">
-                      <td>..</td>
-                      <td>..</td>
-                      <td>..</td>
-                      <td>..</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+
           </div>
         </div>
         <div class="col-lg-4 col-md-6">
