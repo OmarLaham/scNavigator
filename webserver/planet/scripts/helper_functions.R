@@ -11,9 +11,12 @@ runs.dir = paste0(app.dir, "media/runs/")
 #load data depending on upload type
 load.data <-function(dir, runID, upload.name) {
 
+    print(paste0("> Loading.. dir: ", dir));
 
-	rds.file.name <- paste0(dir, upload.name, ".rds")
-	rds.gz.file.name <- paste0(dir, upload.name, ".rds")
+	rds.file.name <- paste0(dir, upload.name, ".rds");
+	print(paste0("> Candidate .rds file:: ", rds.file.name));
+	rds.gz.file.name <- paste0(dir, upload.name, ".rds.gz");
+	print(paste0("> Candidate .rds.gz file:: ", rds.gz.file.name));
 
 	data <- NULL
 
@@ -77,7 +80,6 @@ elbow.plot <- function(data, runs.dir, n.dims, timestamp) {
 
 #clustering
 find.clusters <- function(data, clustering.res, nDims) {
-
 
 	#Cluster the cells
 	data <- FindNeighbors(data, dims = 1:nDims)

@@ -131,14 +131,14 @@ $(document).ready(function() {
                     //console.log(data);
                     const umap_img_src = data["umap_img_src"];
                     const tsne_img_src = data["tsne_img_src"];
+                    const trajectory_img_src = data["trajectory_img_src"];
                     const data_rds_href = data["data_rds_href"];
+                    const clusters = data["clusters"];
 
-                    //remove previous response result then show new response
-                    //('#img-run-exp-umap').attr("src", "");
+                    //update images (plots sources
                     $('#img-run-exp-umap').attr("src", umap_img_src);
-                    //$('#img-run-exp-tsne').attr("src", "");
                     $('#img-run-exp-tsne').attr("src", tsne_img_src);
-                    //$('#lnk-run-exp-data-rds').attr("href", "");
+                    $('#img-run-exp-trajectory').attr("src", trajectory_img_src);
                     $('#lnk-run-exp-data-rds').attr("href", data_rds_href);
 
                     //hide spinner
@@ -161,87 +161,17 @@ $(document).ready(function() {
                     sidebar_experiment_new.removeClass();
 
 
-                }
-            })
-            .fail(function() {
-                alert( "Error. Please try again later." );
-            })
-    });
-
-
-    $("#lnk-exp-degs").click(function() {
-        //show spinner
-        $('#find-degs-spinner').removeClass("d-none")
-
-        json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
-        $.get(json_url, function(response) {
-        })
-            .done(function(response) {
-                if (response) {
-
-                    //re-init HTML items
                     $('#ddl-find-clusters-degs ul').html("");
-                    $('#selected-cluster-wrapper').addClass('d-none');
-                    $('#ddl-find-clusters-degs').addClass("d-none");
-
-                    let data = response;
-                    //console.log(data);
-
-                    let clusters = data["clusters"] // avaiable clusters
-                    let clusterDEGAsList = data["cluster_0_degs_as_list"]; //dict: clusterNum  -> HTML tbody content
-                    selectedClusterDEGAsList = clusterDEGAsList;
-
-                    let clusterDEGAsStr = data["cluster_0_degs_as_str"];
-                    selectedClusterDEGListAsStr = clusterDEGAsStr;
-
-                    //fill table with DEGs for cluster 0
-                    var cluster_0_degs_html = "";
-                    let deg_file_rows = clusterDEGAsStr.split("\n");
-                    for(var i = 0; i < deg_file_rows.length; i++) {
-                        cluster_0_degs_html += "<tr class='text-center'>"
-                        let tds = deg_file_rows[i].split(",");
-                        for(var j = 0; j < tds.length; j++) {
-                             if (j == 0) {
-                                const geneSymbol = tds[0];
-                                cluster_0_degs_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneSymbol + "' class='text-primary'>" + geneSymbol + "</a></td>"
-                            } else {
-                                cluster_0_degs_html += "<td>" + tds[j] + "</td>";
-                            }
-                        }
-                        cluster_0_degs_html += "</tr>";
-                    }
-
-                    //fill table with DEGs for first cluster
-                    $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
-
-                    //hide spinner
-                    $('#find-degs-spinner').addClass("d-none");
-
-
                     //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
                     var ddlFindClustersDegsHTML = ""
                     for (var i = 0; i < clusters.length; i++) {
-                        ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
+                    ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
                     }
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $("#ddl-find-clusters-degs").val(clusters[0]);
                     $("#selected-cluster").text("cluster_" + clusters[0]);
 
-                    //TODO: create real GO and KEGG analysis
-                    const go_data = undefined;
-                    createGOChart(go_data);
-                    const kegg_data = undefined;
-                    createKEGGChart(kegg_data);
-
-                    $('#selected-cluster-wrapper').removeClass('d-none');
                     $('#ddl-find-clusters-degs').removeClass("d-none");
-
-                    //fill table with DEGs for cluster 0
-                    $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
-                    $('#tbl-cluster-degs').removeClass("d-none");
-
-                    //hide spinner
-                    $('#find-degs-spinner').addClass("d-none");
 
 
                 }
@@ -250,6 +180,89 @@ $(document).ready(function() {
                 alert( "Error. Please try again later." );
             })
     });
+
+
+    // $("#lnk-exp-degs").click(function() {
+    //     //show spinner
+    //     $('#find-degs-spinner').removeClass("d-none")
+    //
+    //     json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
+    //     $.get(json_url, function(response) {
+    //     })
+    //         .done(function(response) {
+    //             if (response) {
+    //
+    //                 //re-init HTML items
+    //                 $('#ddl-find-clusters-degs ul').html("");
+    //                 $('#selected-cluster-wrapper').addClass('d-none');
+    //                 $('#ddl-find-clusters-degs').addClass("d-none");
+    //
+    //                 let data = response;
+    //                 //console.log(data);
+    //
+    //                 let clusters = data["clusters"] // avaiable clusters
+    //                 let clusterDEGAsList = data["cluster_0_degs_as_list"]; //dict: clusterNum  -> HTML tbody content
+    //                 selectedClusterDEGAsList = clusterDEGAsList;
+    //
+    //                 let clusterDEGAsStr = data["cluster_0_degs_as_str"];
+    //                 selectedClusterDEGListAsStr = clusterDEGAsStr;
+    //
+    //                 //fill table with DEGs for cluster 0
+    //                 var cluster_0_degs_html = "";
+    //                 let deg_file_rows = clusterDEGAsStr.split("\n");
+    //                 for(var i = 0; i < deg_file_rows.length; i++) {
+    //                     cluster_0_degs_html += "<tr class='text-center'>"
+    //                     let tds = deg_file_rows[i].split(",");
+    //                     for(var j = 0; j < tds.length; j++) {
+    //                          if (j == 0) {
+    //                             const geneSymbol = tds[0];
+    //                             cluster_0_degs_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneSymbol + "' class='text-primary'>" + geneSymbol + "</a></td>"
+    //                         } else {
+    //                             cluster_0_degs_html += "<td>" + tds[j] + "</td>";
+    //                         }
+    //                     }
+    //                     cluster_0_degs_html += "</tr>";
+    //                 }
+    //
+    //                 //fill table with DEGs for first cluster
+    //                 $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
+    //
+    //                 //hide spinner
+    //                 $('#find-degs-spinner').addClass("d-none");
+    //
+    //
+    //                 //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
+    //                 var ddlFindClustersDegsHTML = ""
+    //                 for (var i = 0; i < clusters.length; i++) {
+    //                     ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
+    //                 }
+    //                 $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
+    //                 $("#ddl-find-clusters-degs").val(clusters[0]);
+    //                 $("#selected-cluster").text("cluster_" + clusters[0]);
+    //
+    //                 //TODO: create real GO and KEGG analysis
+    //                 const go_data = undefined;
+    //                 createGOChart(go_data);
+    //                 const kegg_data = undefined;
+    //                 createKEGGChart(kegg_data);
+    //
+    //                 $('#selected-cluster-wrapper').removeClass('d-none');
+    //                 $('#ddl-find-clusters-degs').removeClass("d-none");
+    //
+    //                 //fill table with DEGs for cluster 0
+    //                 $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
+    //                 $('#tbl-cluster-degs').removeClass("d-none");
+    //
+    //                 //hide spinner
+    //                 $('#find-degs-spinner').addClass("d-none");
+    //
+    //
+    //             }
+    //         })
+    //         .fail(function() {
+    //             alert( "Error. Please try again later." );
+    //         })
+    // });
 
     //On selected cluster change: generate and load DEGs table
     $(document).on("click", ".find-cluster-degs-item", function(){
@@ -497,12 +510,12 @@ $(document).ready(function() {
         uploadName = data_folder_name
         usedDataMode = dataMode.rawUpload;
 
-        $('#txt-min-nfeature-rna').val("");
-        $('#txt-max-nfeature-rna').val("");
-        $('#txt-percent-mt').val("");
-        $('#txt-run-exp-n-dims').val("");
+        $('#txt-min-nfeature-rna').val(200);
+        $('#txt-max-nfeature-rna').val(3000);
+        $('#txt-percent-mt').val(5);
+        $('#txt-run-exp-n-dims').val(50);
         $('#txt-run-exp-title').val("");
-        $('#txt-run-exp-clustering-res').val("");
+        $('#txt-run-exp-clustering-res').val(1.2);
 
         $('#loaded-data').html(uploadName);
     });

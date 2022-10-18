@@ -60,4 +60,27 @@ run.trajectory(data, c(), runs.dir, expTitle, timestamp)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
 
+#DEA
+#create dea dir if not exist
+
+expDir <- paste0(mainDir, expTitle, "/");
+mainDir <- expDir;
+subDir <- "dea"
+if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
+	dir.create(file.path(mainDir, subDir))
+}
+
+print("> Running DEA for all clusters")
+
+for(cluster in levels(data)) {
+
+    print(paste("- DEA cluster: ", cluster))
+
+    dea.res <- as.data.frame(FindMarkers(data, ident.1 = cluster, max.cells.per.ident = 50))
+    dea.export.path <- paste0(expDir, "dea/cluster_", cluster, "_dea.csv")
+    write.csv(dea.res, dea.export.path)
+
+}
+
+print("Done with DEA for all clusters.")
 

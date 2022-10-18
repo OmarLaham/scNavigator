@@ -102,7 +102,7 @@
                               </div>
                               <div class="input-group mt-3">
                                 <span class="input-group-text bg-gray-300" id="basic-addon2">Percent Mt</span>
-                                <input id="txt-percent-mt" type="text" class="form-control" placeholder="0.8" aria-label="" aria-describedby="basic-addon2" value="5">
+                                <input id="txt-percent-mt" type="text" class="form-control" placeholder="5" aria-label="" aria-describedby="basic-addon2" value="5">
                               </div>
                             </div>
                             <br />
@@ -136,7 +136,7 @@
                             <div id="accordion-elbow-controls">
                               <div class="input-group mb-3">
                                 <span class="input-group-text bg-gray-300" id="basic-addon1">Max. nDims</span>
-                                <input id="txt-elbow-n-dims" type="text" class="form-control" placeholder="30" aria-label="Max. nDims" aria-describedby="basic-addon1">
+                                <input id="txt-elbow-n-dims" type="text" class="form-control" placeholder="50" aria-label="Max. nDims" aria-describedby="basic-addon1" value="50">
                               </div>
                             </div>
                             <button id="btn-accordion-elbow-run" class="btn btn-small btn-primary">Run</button>
@@ -190,6 +190,8 @@
                               <img id="img-run-exp-umap" src="" width="60%" /><br />
                               <strong>t-SNE:</strong><br />
                               <img id="img-run-exp-tsne" src="" width="60%" /><br />
+                              <strong>Trajectory Pseudotime Plot:</strong><br />
+                              <img id="img-run-exp-trajectory" src="" width="60%" /><br />
                               <strong>Processed Data:</strong><br />
                               data.rds ( <a id="lnk-run-exp-data-rds" href="" target="_self"><i class="fas fa-download"></i> Download</a> )
                             </div>
@@ -208,8 +210,6 @@
                         </h2>
                         <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                           <div class="accordion-body">
-                            <strong>Important:</strong> Make sure you run "<strong>Find DEGs for Different Clusters</strong>" below before you run this step.
-                            <br />
                             <div id="accordion-cross-with-marker-db-controls">
                               <div id="ddl-cross-with-marker-db" class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -265,7 +265,6 @@
                         </h2>
                         <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                           <div class="accordion-body">
-                            <strong>Important:</strong> Make sure you run "<strong>Find DEGs for Different Clusters</strong>" below before you run this step.
                             <div id="accordion-cross-deg-lists-controls">
                               <div id="ddl-cross-with-deg-list" class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -403,8 +402,8 @@
                     <i class="fa fa-check text-info" aria-hidden="true"></i>
                     <span class="font-weight-bold ms-1">Where the job is done ;)</span>
                   </p>
-                  <br />
-                  <a id="lnk-exp-degs" class="text-primary" style="cursor: pointer" href="javascript:;">Find DEGs for Different Clusters <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i></a>
+{#                  <br />#}
+{#                  <a id="lnk-exp-degs" class="text-primary" style="cursor: pointer" href="javascript:;">Find DEGs for Different Clusters <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i></a>#}
                 </div>
                 <br />
                 <div class="text-center">
@@ -412,8 +411,6 @@
                     <span class="sr-only">Loading...</span>
                   </div>
                 </div>
-
-
                 <div id="" class="">
                   <div id="ddl-find-clusters-degs" class="dropdown d-none">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -430,16 +430,28 @@ def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfe
              columns = ["run_id", "exp_title", "upload_name", "min_nfeature_rna", "max_nfeature_rna", "percent_mt", "n_dims", "clustering_res"])
     df_exp_parameters.to_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "exp_parameters.csv"))
 
+    #clusters
+    exp_dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+    if not path.exists(exp_dea_path):
+        raise Exception("Internal Error: Can't find {0}".format(exp_dea_path))
+    clusters = os.listdir((exp_dea_path))
+    clusters = [cluster for cluster in clusters if cluster.startswith("cluster_") and cluster.endswith("_dea.csv")] #you can use glob simply, too =)
+    clusters = [cluster.split("_")[1].split("_")[0] for cluster in clusters]
+    clusters = list(natsorted(clusters))
+
     context = {
 
         "umap_img_src": "http://localhost:8000/media/" +
                         path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap_{0}.png".format(timestamp)).split("/media/")[1],
         "tsne_img_src": "http://localhost:8000/media/" +
                         path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_{0}.png".format(timestamp)).split("/media/")[1],
+        "trajectory_img_src": "http://localhost:8000/media/" +
+                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "trajectory_pseudotime_plot_{0}.png".format(timestamp)).split("/media/")[1],
         # "umap_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap_cell_embedings.png").split("/media/")[1],
         # "tsne_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_cell_embeddings.png").split("/media/")[1],
         "data_rds_href": "http://localhost:8000/media/" +
-                         path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "data.rds").split("/media/")[1]
+                         path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "data.rds").split("/media/")[1],
+        "clusters": clusters
     }
 
     print("> Done: run_r_script_run_experiment")
