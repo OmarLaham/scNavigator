@@ -23,7 +23,7 @@ urlpatterns = [
     #main app URLs
 
     #homepage
-    path("", views.workspace, name='home'),
+    path("", views.index, name='home'),
 
     #start a run
     path("start", views.start, name="start"),

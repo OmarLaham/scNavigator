@@ -24,17 +24,16 @@ set.seed(1234)
 
 
 #create dea dir if not exist
-mainDir <- paste0(exp.dir)
+mainDir <- exp.dir
 subDir <- "dea"
 if(dir.exists(file.path(mainDir, subDir)) == FALSE) {
 	dir.create(file.path(mainDir, subDir))
 }
 
 
-print("> Running DEA on all clusters..")
+print(paste0("> Running DEA on cluster ", cluster, ".."))
 
-data.rds.path <- paste0(exp.dir, "data.rds")
-
+data.rds.path <- paste(exp.dir, "data.rds", sep="")
 # Load the dataset
 data <- readRDS(data.rds.path)
 

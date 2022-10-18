@@ -10,7 +10,7 @@ const dataMode = {
 var usedDataMode = dataMode.rawUpload;
 
 const nDims = 50;
-var expTitle = "P14_Prime"; //TODO: change to undefined
+var expTitle = ""; //TODO: change to undefined
 var selectedCluster = "0" //TODO: change to undefined;
 var selectedClusterDEGAsList = undefined;
 var selectedClusterDEGListAsStr = undefined;
@@ -201,7 +201,12 @@ $(document).ready(function() {
                         cluster_0_degs_html += "<tr class='text-center'>"
                         let tds = deg_file_rows[i].split(",");
                         for(var j = 0; j < tds.length; j++) {
-                            cluster_0_degs_html += "<td>" + tds[j] + "</td>";
+                             if (j == 0) {
+                                const geneSymbol = tds[0];
+                                cluster_0_degs_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneSymbol + "' class='text-primary'>" + geneSymbol + "</a></td>"
+                            } else {
+                                cluster_0_degs_html += "<td>" + tds[j] + "</td>";
+                            }
                         }
                         cluster_0_degs_html += "</tr>";
                     }
@@ -256,9 +261,6 @@ $(document).ready(function() {
         selectedCluster = $(this).data("cluster");
         $("#selected-cluster").text("cluster_" + selectedCluster);
 
-        //TODO: remove next line . it's temp
-        const expTitle = 'P14_Prime';
-
         json_url = `/run_r_script/dea_cluster/${runID}/${expTitle}/${selectedCluster}`
         $.get(json_url, function(response) {
         })
@@ -281,7 +283,12 @@ $(document).ready(function() {
                         cluster_degs_html += "<tr class='text-center'>"
                         let tds = deg_file_rows[i].split(",");
                         for(var j = 0; j < tds.length; j++) {
-                            cluster_degs_html += "<td>" + tds[j] + "</td>";
+                            if (j == 0) {
+                                const geneSymbol = tds[0];
+                                cluster_degs_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneSymbol + "' class='text-primary'>" + geneSymbol + "</a></td>"
+                            } else {
+                                cluster_degs_html += "<td>" + tds[j] + "</td>";
+                            }
                         }
                         cluster_degs_html += "</tr>";
                     }

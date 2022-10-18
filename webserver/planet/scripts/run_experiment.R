@@ -22,7 +22,7 @@ nFeature.RNA.max <- as.integer(args[[5]]);
 percentMT <- as.integer(args[[6]]);
 nDims <- args[[7]];
 clusteringResolution <- as.double(args[[8]]);
-
+timestamp <- args[[9]];#will be added to img name to avoid web page caching
 
 #very important to use same seed so we dont have different results for different runs
 set.seed(1234)
@@ -52,11 +52,11 @@ print("> Clustering..")
 data <- find.clusters(data, clusteringResolution, nDims)
 
 print("> Dimensionality Reduction..")
-data <- reduce.dimensions(data, nDims, runs.dir, expTitle)
+data <- reduce.dimensions(data, nDims, runs.dir, expTitle, timestamp)
 
 #run trajectory to plot pseudotime trajectory
 print("> Trajectory analysis..")
-run.trajectory(data, c(), runs.dir, expTitle)
+run.trajectory(data, c(), runs.dir, expTitle, timestamp)
 
 print("Done with clustering and trajectory. UMAP and t-SNE generated.")
 

@@ -7,7 +7,7 @@ from os import path
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
 from django import template
 from django.views import View
 from planet.models import Run
@@ -39,6 +39,9 @@ from subprocess import Popen, PIPE
 import planet.utils.helper_functions as hf
 
 default_pval_thresh = 0.05
+
+def index(request):
+    return HttpResponseRedirect("/workspace/run/1")
 
 def start(request):
 
@@ -73,6 +76,9 @@ def lst_saved_deg_lists(request, run_id):
         'saved_deg_lists': saved_deg_lists
     }
 
+
+    print("> Done: lst_saved_deg_lists")
+
     return JsonResponse(context)
 
 
@@ -91,6 +97,8 @@ def save_deg_list(request, run_id, exp_title, cluster, deg_list_id):
 
     context = {}
 
+    print("> Done: save_deg_list")
+
     return JsonResponse(context)
 
 
@@ -101,6 +109,8 @@ def del_saved_deg_list(request, run_id, deg_list_id):
         raise Exception("Internal Error: Can't find", list_path)
 
     os.remove(list_path)
+
+    print("> del_saved_deg_list")
 
     return JsonResponse({})
 
@@ -128,7 +138,7 @@ def saved_deg_list(request, run_id, deg_list_id):
         p_val_adj = row["p_val_adj"]
 
         tbl_html += "<tr class='text-center'>"
-        tbl_html += "<td>{0}</td>".format(gene)
+        tbl_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene={0}' class='text-primary'>{1}</td>".format(gene, gene)
         tbl_html += "<td>{0}</td>".format(avg_log2FC)
         tbl_html += "<td>{0}</td>".format(p_val)
         tbl_html += "<td>{0}</td>".format(p_val_adj)
@@ -142,6 +152,8 @@ def saved_deg_list(request, run_id, deg_list_id):
 
     html_template = loader.get_template('home/saved-deg-list.html')
     return HttpResponse(html_template.render(context, request))
+
+    print("> saved_deg_list")
 
     return JsonResponse(context)
 
@@ -166,65 +178,10 @@ def create_deg_list_manually(request, run_id, deg_list_id, genes):
     with open(saved_deg_list_path, "w") as f:
         f.write(file_content)
 
+    print("> Done: create_deg_list_manually")
+
     return JsonResponse({})
 
-
-
-# def cross_with_saved_deg_lists(request, run_id, exp_title, clusters, saved_deg_lists):
-#
-#     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
-#     clusters_dea_paths = []
-#
-#     saved_deg_lists = saved_deg_lists.split(",")
-#
-#     if clusters == "all":
-#         clusters_dea_paths = list(sorted(os.listdir(dea_path)))
-#         #fill with all available clusters from this experiment
-#         clusters = pd.read_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea", "clusters.csv"))["levels(data)"].values.tolist()
-#     else:
-#         clusters = clusters.split(",")
-#         for cluster in clusters:
-#             clusters_dea_paths.append(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
-#
-#     intersection_result = dict()
-#
-#     for cluster in clusters:
-#
-#         #intersection results for single cluster vs different saved deg lists
-#         cluster_results = dict()
-#
-#         df_cluster_dea = pd.read_csv(path.join(dea_path, "cluster_{0}_dea.csv".format(cluster)))
-#         # get columns ready for intersection
-#         colnames = list(df_cluster_dea.columns)
-#         colnames[0] = "gene"
-#         df_cluster_dea.columns = colnames
-#         df_cluster_dea = df_cluster_dea[df_cluster_dea["p_val"] <= default_pval_thresh]
-#
-#         for saved_deg_list in saved_deg_lists:
-#             saved_deg_list_path = path.join(settings.RUNS_DIR, run_id, "saved_deg_lists", "{0}.csv".format(saved_deg_list))
-#             df_saved_deg_list = pd.read_csv(saved_deg_list_path)
-#
-#             #get columns ready for intersection
-#             colnames = list(df_saved_deg_list.columns)
-#             colnames[0] = "gene"
-#             df_saved_deg_list.columns = colnames
-#             df_saved_deg_list = df_saved_deg_list[df_saved_deg_list["p_val"] <= default_pval_thresh]
-#
-#             #let's do intersection ;)
-#
-#             cluster_genes = df_cluster_dea["gene"].values.tolist()
-#             saved_deg_list_genes = df_saved_deg_list["gene"].values.tolist()
-#
-#             gene_intersection = [gene for gene in cluster_genes if gene in saved_deg_list_genes]
-#             cluster_results[saved_deg_list] = gene_intersection
-#
-#         intersection_result[cluster] = cluster_results
-#
-#     context = {
-#         "intersection_result": intersection_result
-#     }
-#
-#     return JsonResponse(context)
 
 def json_find_cluster_to_list_gene_intersection(request, run_id, exp_title, cluster, saved_deg_list_id):
     dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
@@ -258,6 +215,8 @@ def json_find_cluster_to_list_gene_intersection(request, run_id, exp_title, clus
     context = {
         "intersection": gene_intersection
     }
+
+    print("> Done: json_find_cluster_to_list_gene_intersection")
 
     return JsonResponse(context)
 
@@ -302,6 +261,8 @@ def json_find_exp_to_list_gene_intersection(request, run_id, exp_title, saved_de
     context = {
         "dict_intersection_result": dict_intersection_result
     }
+
+    print("> Done: json_find_exp_to_list_gene_intersection")
 
     return JsonResponse(context)
 
@@ -394,6 +355,8 @@ def json_find_cluster_to_db_gene_intersection(request, run_id, exp_title, db_spe
         "dict_intersection_result": dict_intersection_result
     }
 
+    print("> Done: json_find_cluster_to_db_gene_intersection")
+
     return JsonResponse(context)
 
 def workspace(request, run_id):
@@ -410,59 +373,76 @@ def workspace(request, run_id):
     }
 
     html_template = loader.get_template('home/workspace.html')
+
+    print("> Done: workspace")
+
     return HttpResponse(html_template.render(context, request))
 
 
 def run_r_script_qc_metrics(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt):
 
+    timestamp = hf.generate_unix_timestamp() # create plots with timestamps to solve cashing problems
+
     subprocess.run(
         ["conda", "run", "-n", "single-cell", "Rscript",
          path.join(settings.SCRIPTS_DIR, "qc_metrics.R"),
-         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt)])
+         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(timestamp)])
+
+
 
     context = {
-        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "qc_metrics.png").split("/media/")[1]
+        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "qc_metrics_{0}.png".format(timestamp)).split("/media/")[1]
     }
+
+    print("> Done: run_r_script_qc_metrics")
 
     return JsonResponse(context)
 
 def run_r_script_elbow_plot(request, run_id, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims):
 
+    timestamp = hf.generate_unix_timestamp()  # create plots with timestamps to solve cashing problems
+
     subprocess.run(
         ["conda", "run", "-n", "single-cell", "Rscript",
          path.join(settings.SCRIPTS_DIR, "elbow_plot.R"),
-         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims)])
+         run_id, upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(timestamp)])
 
     context = {
-        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "elbow_plot.png").split("/media/")[1]
+        "img_src": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "tmp", "elbow_plot_{0}.png".format(timestamp)).split("/media/")[1]
     }
+
+    print("> Done: run_r_script_elbow_plot")
 
     return JsonResponse(context)
 
 def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
 
+    timestamp = hf.generate_unix_timestamp()  # create plots with timestamps to solve cashing problems
+
     subprocess.run(
         ["conda", "run", "-n", "single-cell", "Rscript",
          path.join(settings.SCRIPTS_DIR, "run_experiment.R"),
-         run_id, str(exp_title), upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
+         run_id, str(exp_title), upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res), str(timestamp)])
 
     # create df_exp_parameters to save exp parameters so we can load them any time the user loads an experiment later
     # BE CAREFUL: here we use data.rds (run_experiment result), not the original upload_name
-    df_exp_parameters = pd.DataFrame([run_id, str(exp_title), "data.rds", str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)],
+    df_exp_parameters = pd.DataFrame([[run_id, str(exp_title), "data.rds", str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)]],
              columns = ["run_id", "exp_title", "upload_name", "min_nfeature_rna", "max_nfeature_rna", "percent_mt", "n_dims", "clustering_res"])
-    df_exp_parameters.to_csv(path.join(settings.RUNS_DIR, run_id, "data", exp_title, "exp_parameters.csv"))
+    df_exp_parameters.to_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "exp_parameters.csv"))
 
     context = {
 
         "umap_img_src": "http://localhost:8000/media/" +
-                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap.png").split("/media/")[1],
+                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap_{0}.png".format(timestamp)).split("/media/")[1],
         "tsne_img_src": "http://localhost:8000/media/" +
-                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne.png").split("/media/")[1],
+                        path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_{0}.png".format(timestamp)).split("/media/")[1],
         # "umap_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "umap_cell_embedings.png").split("/media/")[1],
         # "tsne_cell_embeddings": "http://localhost:8000/media/" + path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "tsne_cell_embeddings.png").split("/media/")[1],
         "data_rds_href": "http://localhost:8000/media/" +
                          path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "data.rds").split("/media/")[1]
     }
+
+    print("> Done: run_r_script_run_experiment")
 
     return JsonResponse(context)
 
@@ -510,6 +490,8 @@ def run_r_script_list_clusters_dea_first(request, run_id, exp_title):
         "cluster_0_degs_as_str": cluster_0_degs_as_str
     }
 
+    print("> Done: run_r_script_list_clusters_dea_first")
+
     return JsonResponse(context)
 
 def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
@@ -522,10 +504,10 @@ def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
              run_id, str(exp_title), str(cluster)])
 
     #after Rscript you will have clusters.csv and cluster_i.csv(s) in /run_dir/run_id/data/experiments/exp_title/dea
-    exp_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
+    exp_dea_path = path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "dea")
 
     #generate tbody HTML for first cluster and store in cluster_1_degs_html
-    df_cluster_degs_path = path.join(exp_path, "cluster_{0}_dea.csv".format(cluster))
+    df_cluster_degs_path = path.join(exp_dea_path, "cluster_{0}_dea.csv".format(cluster))
     if not path.exists(df_cluster_degs_path):
         raise Exception("Internal Error: can't find:", df_cluster_degs_path)
 
@@ -549,6 +531,8 @@ def run_r_script_dea_cluster(request, run_id, exp_title, cluster):
         "cluster_degs_as_str": cluster_degs_as_str
     }
 
+    print("> Done: run_r_script_dea_cluster")
+
     return JsonResponse(context)
 
 def run_r_script_subset_cluster(request, run_id, upload_name, exp_title, cluster, min_nfeature_rna, max_nfeature_rna, percent_mt, n_dims, clustering_res):
@@ -560,6 +544,7 @@ def run_r_script_subset_cluster(request, run_id, upload_name, exp_title, cluster
          path.join(settings.SCRIPTS_DIR, "subset_cluster.R"),
          run_id, str(upload_name), str(exp_title), str(cluster), str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)])
 
+    print("> Done: run_r_script_subset_cluster")
 
     return JsonResponse({})
 
@@ -587,6 +572,8 @@ def json_load_exp(request, run_id, exp_title):
         "dict_exp_parameters": dict_exp_params
     }
 
+    print("> Done: json_load_exp")
+
     return JsonResponse(context)
 
 def downloads(request):
@@ -595,46 +582,29 @@ def downloads(request):
     context['segment'] = 'downloads'
 
     html_template = loader.get_template('downloads.html')
+    print("> Done: downloads")
     return HttpResponse(html_template.render(context, request))
 
-def HomeJSONView(request):
-
-    context = {}
-    return JsonResponse(context)
-
-
-class MetadataView(View):
-    template_name = 'metadata.html'
-
-    def get(self, request, *args, **kwargs):
-
-        context = {}
-
-
-        #context["full_data_table_thead_content"] = thead_content
-        #context["full_data_table_tbody_content"] = tbody_content
-
-        return render(request, self.template_name, context)
 
 #@login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-
-        load_template = request.path.split('/')[-1]
-        context['segment'] = load_template
-        html_template = loader.get_template( load_template )
-
-        return HttpResponse(html_template.render(context, request))
-
-    except template.TemplateDoesNotExist:
-
-        html_template = loader.get_template('not_used/templates/page-404.html')
-        return HttpResponse(html_template.render(context, request))
-
-    except:
-
-        html_template = loader.get_template('not_used/templates/page-500.html')
-        return HttpResponse(html_template.render(context, request))
+# def pages(request):
+#     context = {}
+#     # All resource paths end in .html.
+#     # Pick out the html file name from the url. And load that template.
+#     try:
+#
+#         load_template = request.path.split('/')[-1]
+#         context['segment'] = load_template
+#         html_template = loader.get_template( load_template )
+#
+#         return HttpResponse(html_template.render(context, request))
+#
+#     except template.TemplateDoesNotExist:
+#
+#         html_template = loader.get_template('not_used/templates/page-404.html')
+#         return HttpResponse(html_template.render(context, request))
+#
+#     except:
+#
+#         html_template = loader.get_template('not_used/templates/page-500.html')
+#         return HttpResponse(html_template.render(context, request))

@@ -14,11 +14,11 @@ source(paste0(scripts.dir, 'helper_functions.R'))
 args <- commandArgs(trailingOnly = TRUE);
 runID <- args[[1]];
 uploadName <- args[[2]];
-nFeature.RNA.min <- args[[3]];
-nFeature.RNA.max <-  args[[4]];
-percentMT <-  args[[5]];
+nFeature.RNA.min <- as.integer(args[[3]]);
+nFeature.RNA.max <-  as.integer(args[[4]]);
+percentMT <-  as.integer(args[[5]]);
 nDims <- args[[6]];
-
+timestamp <- args[[7]];#will be added to img name to avoid web page caching
 
 #very important to use same seed so we dont have different results for different runs
 set.seed(1234)
@@ -39,7 +39,7 @@ data
 data <- process.sample(data, nFeature.RNA.min, nFeature.RNA.max, percentMT)
 
 #plot elbow plot
-elbow.plot(data, runs.dir, nDims)
+elbow.plot(data, runs.dir, nDims, timestamp)
 
 
 print("Done and elbow plot saved!")

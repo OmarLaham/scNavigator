@@ -21,6 +21,8 @@ import json
 import gzip
 from glob import glob, escape
 
+import datetime
+
 import os
 from os import path
 
@@ -48,3 +50,10 @@ def is_valid_run(run_id):
         return True
     else:
         raise Exception("Internal Error: Invalid requested run id.")
+
+
+def generate_unix_timestamp():
+    present_date = datetime.datetime.now()
+    unix_timestamp = int(datetime.datetime.timestamp(present_date) * 1000000) #(16 digits)
+    return unix_timestamp
+
