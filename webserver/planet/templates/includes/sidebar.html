@@ -14,9 +14,9 @@
 
       <!-- hidden to be used as a template to create new instances -->
       <div id="sidebar-exp-template" class="d-none">
-        <div class="sidebar-experiemnt-wrapper sidebar-experiemnt-new text-center d-none">
-          <a class="sidebar-experiemnt-load" data-exp-title="exp_title_place_holder" href="javascript:;">
-            <div class="sidebar-experiemnt text-center pt-3 h3">
+        <div class="sidebar-experiment-wrapper sidebar-experiment-new text-center d-none">
+          <a class="sidebar-experiment-load" data-exp-title="exp_title_place_holder" href="javascript:;">
+            <div class="sidebar-experiment text-center pt-3 h3">
               <span><i class="fas fa-microscope"></i></span>
             </div>
             exp_title_place_holder
@@ -27,9 +27,9 @@
       <!-- / end of template -->
 
       {% for exp in lst_experiments %}  {% comment %} app_name/processor.py {% endcomment %}
-        <div class="sidebar-experiemnt-wrapper text-center">
-          <a class="sidebar-experiemnt-load" data-exp-title="{{ exp }}" href="javascript:;">
-            <div class="sidebar-experiemnt text-center pt-3 h3">
+        <div class="sidebar-experiment-wrapper text-center">
+          <a class="sidebar-experiment-load" data-exp-title="{{ exp }}" href="javascript:;">
+            <div class="sidebar-experiment text-center pt-3 h3">
               <span><i class="fas fa-microscope"></i></span>
             </div>
             {{ exp }}

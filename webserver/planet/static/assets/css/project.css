@@ -51,7 +51,7 @@
 }
 
 
-.sidebar-experiemnt {
+.sidebar-experiment {
     width: 160px;
     height: 80px;
     border-radius: 5%;
@@ -61,6 +61,6 @@
     margin-right: auto;
 }
 
-.sidebar-experiemnt:hover {
+.sidebar-experiment:hover {
     border-color: #cb0c9f;
 }

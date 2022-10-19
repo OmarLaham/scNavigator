@@ -14,9 +14,9 @@ load.data <-function(dir, runID, upload.name) {
     print(paste0("> Loading.. dir: ", dir));
 
 	rds.file.name <- paste0(dir, upload.name, ".rds");
-	print(paste0("> Candidate .rds file:: ", rds.file.name));
+	#print(paste0("> Candidate .rds file:: ", rds.file.name));
 	rds.gz.file.name <- paste0(dir, upload.name, ".rds.gz");
-	print(paste0("> Candidate .rds.gz file:: ", rds.gz.file.name));
+	#print(paste0("> Candidate .rds.gz file:: ", rds.gz.file.name));
 
 	data <- NULL
 

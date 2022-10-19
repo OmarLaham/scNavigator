@@ -153,19 +153,20 @@ $(document).ready(function() {
                     var sidebar_exp_html = $('#sidebar-exp-template').html().replaceAll("exp_title_place_holder", expTitle);
                     //append
                     $('#sidebar-experiments').append(sidebar_exp_html);
-                    //fade effect
-                    var sidebar_experiment_new = $('sidebar-experiemnt-new');
+                    //fade effect: hide all then fadeIn all
+                    var sidebar_experiment_new = $('.sidebar-experiment-wrapper');
                     sidebar_experiment_new.hide();
                     sidebar_experiment_new.removeClass('d-none');
                     sidebar_experiment_new.fadeIn();
-                    sidebar_experiment_new.removeClass();
+                    sidebar_experiment_new.removeClass('sidebar-experiment-new'); // none is newly added any more
 
 
+                    //add clusters to DEGs area
                     $('#ddl-find-clusters-degs ul').html("");
                     //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
                     var ddlFindClustersDegsHTML = ""
                     for (var i = 0; i < clusters.length; i++) {
-                    ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
+                        ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
                     }
                     $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
                     $("#ddl-find-clusters-degs").val(clusters[0]);
@@ -671,7 +672,7 @@ $(document).ready(function() {
     });
 
     // this should have been implemented in a "sidebar.js" page, but I implemented here to avoid re-declaration of all vars I have here
-    $(document).on("click", ".sidebar-experiemnt-load", function() {
+    $(document).on("click", ".sidebar-experiment-load", function() {
 
         expTitle = $(this).data("exp-title");
 

@@ -426,7 +426,7 @@ def run_r_script_run_experiment(request, run_id, exp_title, upload_name, min_nfe
 
     # create df_exp_parameters to save exp parameters so we can load them any time the user loads an experiment later
     # BE CAREFUL: here we use data.rds (run_experiment result), not the original upload_name
-    df_exp_parameters = pd.DataFrame([[run_id, str(exp_title), "data.rds", str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)]],
+    df_exp_parameters = pd.DataFrame([[run_id, str(exp_title), upload_name, str(min_nfeature_rna), str(max_nfeature_rna), str(percent_mt), str(n_dims), str(clustering_res)]],
              columns = ["run_id", "exp_title", "upload_name", "min_nfeature_rna", "max_nfeature_rna", "percent_mt", "n_dims", "clustering_res"])
     df_exp_parameters.to_csv(path.join(settings.RUNS_DIR, run_id, "data", "experiments", exp_title, "exp_parameters.csv"))
 
