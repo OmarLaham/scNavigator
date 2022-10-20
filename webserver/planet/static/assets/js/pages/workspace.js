@@ -182,89 +182,6 @@ $(document).ready(function() {
             })
     });
 
-
-    // $("#lnk-exp-degs").click(function() {
-    //     //show spinner
-    //     $('#find-degs-spinner').removeClass("d-none")
-    //
-    //     json_url = `/run_r_script/list_clusters_dea_first/${runID}/${expTitle}`
-    //     $.get(json_url, function(response) {
-    //     })
-    //         .done(function(response) {
-    //             if (response) {
-    //
-    //                 //re-init HTML items
-    //                 $('#ddl-find-clusters-degs ul').html("");
-    //                 $('#selected-cluster-wrapper').addClass('d-none');
-    //                 $('#ddl-find-clusters-degs').addClass("d-none");
-    //
-    //                 let data = response;
-    //                 //console.log(data);
-    //
-    //                 let clusters = data["clusters"] // avaiable clusters
-    //                 let clusterDEGAsList = data["cluster_0_degs_as_list"]; //dict: clusterNum  -> HTML tbody content
-    //                 selectedClusterDEGAsList = clusterDEGAsList;
-    //
-    //                 let clusterDEGAsStr = data["cluster_0_degs_as_str"];
-    //                 selectedClusterDEGListAsStr = clusterDEGAsStr;
-    //
-    //                 //fill table with DEGs for cluster 0
-    //                 var cluster_0_degs_html = "";
-    //                 let deg_file_rows = clusterDEGAsStr.split("\n");
-    //                 for(var i = 0; i < deg_file_rows.length; i++) {
-    //                     cluster_0_degs_html += "<tr class='text-center'>"
-    //                     let tds = deg_file_rows[i].split(",");
-    //                     for(var j = 0; j < tds.length; j++) {
-    //                          if (j == 0) {
-    //                             const geneSymbol = tds[0];
-    //                             cluster_0_degs_html += "<td><a target='_blank' href='https://www.genecards.org/cgi-bin/carddisp.pl?gene=" + geneSymbol + "' class='text-primary'>" + geneSymbol + "</a></td>"
-    //                         } else {
-    //                             cluster_0_degs_html += "<td>" + tds[j] + "</td>";
-    //                         }
-    //                     }
-    //                     cluster_0_degs_html += "</tr>";
-    //                 }
-    //
-    //                 //fill table with DEGs for first cluster
-    //                 $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
-    //
-    //                 //hide spinner
-    //                 $('#find-degs-spinner').addClass("d-none");
-    //
-    //
-    //                 //fill ddl-find-clusters-degs with clusters and set cluster 0 as default
-    //                 var ddlFindClustersDegsHTML = ""
-    //                 for (var i = 0; i < clusters.length; i++) {
-    //                     ddlFindClustersDegsHTML += '<li><a class="dropdown-item find-cluster-degs-item" href="javascript:;" data-cluster="' + clusters[i] + '">' + 'cluster_' + clusters[i] + '</a></li>';
-    //                 }
-    //                 $('#ddl-find-clusters-degs ul').html(ddlFindClustersDegsHTML);
-    //                 $("#ddl-find-clusters-degs").val(clusters[0]);
-    //                 $("#selected-cluster").text("cluster_" + clusters[0]);
-    //
-    //                 //TODO: create real GO and KEGG analysis
-    //                 const go_data = undefined;
-    //                 createGOChart(go_data);
-    //                 const kegg_data = undefined;
-    //                 createKEGGChart(kegg_data);
-    //
-    //                 $('#selected-cluster-wrapper').removeClass('d-none');
-    //                 $('#ddl-find-clusters-degs').removeClass("d-none");
-    //
-    //                 //fill table with DEGs for cluster 0
-    //                 $('#tbl-cluster-degs tbody').html(cluster_0_degs_html);
-    //                 $('#tbl-cluster-degs').removeClass("d-none");
-    //
-    //                 //hide spinner
-    //                 $('#find-degs-spinner').addClass("d-none");
-    //
-    //
-    //             }
-    //         })
-    //         .fail(function() {
-    //             alert( "Error. Please try again later." );
-    //         })
-    // });
-
     //On selected cluster change: generate and load DEGs table
     $(document).on("click", ".find-cluster-degs-item", function(){
 
@@ -307,6 +224,12 @@ $(document).ready(function() {
                         cluster_degs_html += "</tr>";
                     }
                     $('#tbl-cluster-degs tbody').html(cluster_degs_html);
+
+                    //TODO: create real GO and KEGG analysis
+                    const go_data = undefined;
+                    createGOChart(go_data);
+                    const kegg_data = undefined;
+                    createKEGGChart(kegg_data);
 
                     //hide spinner
                     $('#find-degs-spinner').addClass("d-none");
